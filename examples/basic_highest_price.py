@@ -1,6 +1,6 @@
 import asyncio
 
-from nepse.core import Client
+from nepse import Client
 
 
 async def main():
