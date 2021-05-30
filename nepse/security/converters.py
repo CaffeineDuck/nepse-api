@@ -23,12 +23,14 @@ def create_company_object(data: dict):
     sector_master = create_sector_master_object(data.get("sectorMaster"))
     model = Company(
         id=data.get("id"),
-        short_name=data.get("shortName"),
-        contact_person=data.get("contactPerson"),
+        short_name=data.get("companyShortName"),
+        contact_person=data.get("companyContactPerson"),
         email=data.get("email"),
-        website=data.get("website"),
-        name=data.get("name"),
+        website=data.get("companyWebsite"),
+        name=data.get("companyName"),
         sector_master=sector_master,
+        registration_number=data.get("companyRegistrationNumber"),
+        active_status=data.get("activeStatus"),
     )
     return model
 
