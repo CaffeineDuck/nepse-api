@@ -25,7 +25,7 @@ The APIs that I used to create this API wrapper is:
 
 ```py
 import asyncio
-from nepse.core import Client
+from nepse import Client
 
 async def main():
     # Initializes the client
@@ -39,8 +39,10 @@ async def main():
 
     # Properly closes the session
     await client.close()
-
-asyncio.run(main())
+    
+# Run the function
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())
 ```
 
 ## Documentation?
