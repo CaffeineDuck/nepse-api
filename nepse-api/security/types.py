@@ -8,7 +8,7 @@ class Instrument:
     id: int
     code: str
     description: str
-    active_status: bool
+    active_status: str
 
 @dataclass
 class ShareGroup:
@@ -17,14 +17,14 @@ class ShareGroup:
     description: str
     modified_by: str
     modified_date: datetime.date
-    active_status: bool
+    active_status: str
     is_defualt: str
 
 @dataclass
 class SectorMaster:
     id: int
     description: str
-    active_status: bool
+    active_status: str
     regulatory_body: str
 
 @dataclass
@@ -59,7 +59,7 @@ class Security:
     secured: Any # TODO: Get the actual data type!
     series: Any # TODO: Get the actual data type!
     share_group: ShareGroup
-    active_status: bool
+    active_status: str
     divisor: int
     cds_stock_ref_id: int
     security_name: str
