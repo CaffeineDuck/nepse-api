@@ -14,6 +14,7 @@ How is this better than [PyPi Nepse](https://github.com/pyFrappe/nepse)?
 - It is asynchronous.
 - Data can be taken as attributes rather than from dict.
 - Data is fetched from the API rather than scraping the site.
+- Data is cached 
 
 ## APIs used
 
