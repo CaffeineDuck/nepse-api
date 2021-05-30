@@ -8,6 +8,10 @@ and usable way.
 
 This is a API wrapper for NEPSE API. This project was inspired from [PyPi Nepse](https://github.com/pyFrappe/nepse). 
 
+## How to use?
+
+You can use this by package from [Nepse API PyPi](https://pypi.org/project/nepse-api/)
+
 ## Why use this?
 
 How is this better than [PyPi Nepse](https://github.com/pyFrappe/nepse)?
