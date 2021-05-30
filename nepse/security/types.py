@@ -89,7 +89,7 @@ class DailyTrade:
     close_price: int
     fifty_two_week_high: int
     fifty_two_week_low: int
-    last_updated_time: datetime.time
+    last_updated_date_time: datetime.time
 
 
 @dataclass

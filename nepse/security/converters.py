@@ -8,6 +8,7 @@ from nepse.security.types import (
     ShareGroup,
 )
 
+
 def create_sector_master_object(data: dict):
     model = SectorMaster(
         id=data.get("id"),
@@ -48,7 +49,7 @@ def create_share_group(data: dict):
         name=data.get("name"),
         active_status=data.get("activeStatus"),
         description=data.get("description"),
-        is_defualt=data.get("isDefault"),
+        is_default=data.get("isDefault"),
         capital_range_min=data.get("capitalRangeMin"),
         modified_by=data.get("modifiedBy"),
         modified_date=data.get("modifiedDate"),
@@ -57,7 +58,7 @@ def create_share_group(data: dict):
 
 
 def create_security_object(data: dict):
-    company = create_company_object(data.get("company"))
+    company = create_company_object(data.get("companyId"))
     instrument = create_instrument_object(data.get("instrumentType"))
     share_group = create_share_group(data.get("shareGroupId"))
 
@@ -132,3 +133,4 @@ def create_reponse_object(data: dict):
         updated_date=data.get("updatedDate"),
         security_id=data.get("securityId"),
     )
+    return model
