@@ -11,6 +11,9 @@ This is a API wrapper for NEPSE API. This project was inspired from [PyPi Nepse]
 ## How to use?
 
 You can use this by package from [Nepse API PyPi](https://pypi.org/project/nepse-api/)
+```sh
+pip install nepse-api
+```
 
 ## Why use this?
 
