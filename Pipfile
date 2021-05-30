@@ -4,12 +4,14 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-isort = "*"
 aiohttp = "*"
 cachetools = "*"
 
 [dev-packages]
 black = "*"
+bumpversion = "*"
+isort = "*"
+twine = "*"
 
 [requires]
 python_version = "3.9"

@@ -1,2 +1,7 @@
 __pycache__/
 .vscode/
+
+# Things for PyPi project
+dist/
+build/
+nepse_api.egg-info/
