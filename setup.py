@@ -32,7 +32,7 @@ setuptools.setup(
     ],
     python_requires=">3.7",
     keywords="api-wrapper stock",
-    install_requires=["cachetools", "pyhumps"],
+    install_requires=["cachetools", "pyhumps", "httpx"],
     project_urls={
         "Homepage": "https://github.com/Samrid-Pandit/nepse-api/",
     },
