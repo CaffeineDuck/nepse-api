@@ -1,20 +1,19 @@
-from pprint import pprint
 from typing import List, Optional
 
 import humps
-from aiohttp import ClientSession
 from cachetools import LRUCache, TTLCache
 
 from nepse.errors import NotFound, SymbolOrIdNotPassed
 from nepse.security.decorators import is_cached
 from nepse.security.types import BaseSecurity, SecurityResponse
+from nepse.utils import ClientWrapperHTTPX
 
-BASE_URL = "https://newweb.nepalstock.com/api/nots/security/"
+BASE_URL = "https://newweb.nepalstock.com/api/nots/security"
 
 
 class SecurityClient:
-    def __init__(self, session: ClientSession) -> None:
-        self._session = session
+    def __init__(self, client_wrapper: ClientWrapperHTTPX) -> None:
+        self._client_wrapper = client_wrapper
         self._securities_basic_cache = LRUCache(1000)
         self._securities_full_cache = TTLCache(100, 500)
 
@@ -34,7 +33,7 @@ class SecurityClient:
         await self.fetch_all_base_securities()
 
     async def fetch_all_base_securities(self) -> List[BaseSecurity]:
-        securities = await (await self._session.get(BASE_URL)).json()
+        securities = await self._client_wrapper.get_json(BASE_URL)
 
         def create_security_object(security: dict):
             data = humps.decamelize(security)
@@ -67,7 +66,7 @@ class SecurityClient:
         return model
 
     async def fetch_security_response(self, id: int):
-        data = await (await self._session.get(f"{BASE_URL}/{id}")).json()
+        data = await self._client_wrapper.get_json(f"{BASE_URL}/{id}")
         if not data:
             raise NotFound()
 
