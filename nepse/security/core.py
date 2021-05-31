@@ -1,10 +1,11 @@
+from pprint import pprint
 from typing import List, Optional
 
+import humps
 from aiohttp import ClientSession
 from cachetools import LRUCache, TTLCache
 
 from nepse.errors import NotFound, SymbolOrIdNotPassed
-from nepse.security.converters import create_reponse_object
 from nepse.security.decorators import is_cached
 from nepse.security.types import BaseSecurity, SecurityResponse
 
@@ -36,12 +37,8 @@ class SecurityClient:
         securities = await (await self._session.get(BASE_URL)).json()
 
         def create_security_object(security: dict):
-            model = BaseSecurity(
-                id=security.get("id"),
-                symbol=security.get("symbol"),
-                active_status=security.get("activeStatus"),
-                name=security.get("name"),
-            )
+            data = humps.decamelize(security)
+            model = BaseSecurity(**data)
             self.create_security_model(model)
             return model
 
@@ -50,14 +47,10 @@ class SecurityClient:
         ]
         return securities_objects
 
-    # TODO: work with the decorator for checks!
-    # @is_cached
+    @is_cached
     async def get_security_response(
         self, id: Optional[int], symbol: Optional[str]
     ) -> SecurityResponse:
-        if not self._securities_basic_cache:
-            await self._update_basic_securities_cache()
-
         if not any(id or symbol):
             raise SymbolOrIdNotPassed()
 
@@ -77,7 +70,9 @@ class SecurityClient:
         data = await (await self._session.get(f"{BASE_URL}/{id}")).json()
         if not data:
             raise NotFound()
+            
+        data = humps.decamelize(data)
 
-        model = create_reponse_object(data)
+        model = SecurityResponse(**data)
         self.create_security_cache(model)
         return model

@@ -1,5 +1,5 @@
 import datetime
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 
@@ -26,7 +26,7 @@ class ShareGroup:
 @dataclass
 class SectorMaster:
     id: int
-    description: str
+    sector_description: str
     active_status: str
     regulatory_body: str
 
@@ -34,14 +34,17 @@ class SectorMaster:
 @dataclass
 class Company:
     id: int
-    short_name: str
-    name: str
+    company_short_name: str
+    company_name: str
     email: str
-    website: str
-    contact_person: str
+    company_website: str
+    company_contact_person: str
     sector_master: SectorMaster
-    registration_number: int
+    company_registration_number: int
     active_status: str
+
+    def __post_init__(self) -> None:
+        self.sector_master = SectorMaster(**self.sector_master)
 
 
 @dataclass
@@ -56,7 +59,7 @@ class Security:
     instrument_type: Instrument
     capital_gain_base_date: datetime.date
     face_value: int
-    high_range_DPR: Any  # TODO: Get the actual data type!
+    high_range_dpr: Any  # TODO: Get the actual data type!
     issuer_name: str
     me_instance_number: int
     parent_id: int
@@ -65,7 +68,6 @@ class Security:
     scheme_name: str
     secured: Any  # TODO: Get the actual data type!
     series: Any  # TODO: Get the actual data type!
-    share_group: ShareGroup
     active_status: str
     divisor: int
     cds_stock_ref_id: int
@@ -74,7 +76,13 @@ class Security:
     networth_base_price: float
     security_trade_cycle: int
     is_promoter: bool
-    company: Company
+    company_id: Company
+    share_group_id: ShareGroup
+
+    def __post_init__(self) -> None:
+        self.company_id = Company(**self.company_id)
+        self.instrument_type = Instrument(**self.instrument_type)
+        self.share_group_id = ShareGroup(**self.share_group_id)
 
 
 @dataclass
@@ -96,7 +104,7 @@ class DailyTrade:
 
 @dataclass
 class SecurityResponse:
-    daily_trade: DailyTrade
+    security_daily_trade_dto: DailyTrade
     security: Security
     stock_listed_shares: int
     paid_up_capital: int
@@ -109,6 +117,10 @@ class SecurityResponse:
     updated_date: datetime.date
     security_id: int
 
+    def __post_init__(self) -> None:
+        self.security = Security(**self.security)
+        self.security_daily_trade_dto = DailyTrade(**self.security_daily_trade_dto)
+
 
 @dataclass
 class BaseSecurity:
@@ -116,3 +128,4 @@ class BaseSecurity:
     symbol: str
     name: str
     active_status: str
+    security_name: str
