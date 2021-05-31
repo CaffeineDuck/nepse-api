@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 cachetools = "*"
 pyhumps = "*"
+httpx = "*"
 
 [dev-packages]
 black = "*"
