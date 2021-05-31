@@ -4,7 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-aiohttp = "*"
 cachetools = "*"
 pyhumps = "*"
 
@@ -13,6 +12,8 @@ black = "*"
 bumpversion = "*"
 isort = "*"
 twine = "*"
+pytest = "*"
+pytest-asyncio = "*"
 
 [requires]
 python_version = "3.9"
