@@ -6,7 +6,7 @@ from nepse import Client
 async def main():
     client = Client()
     data = await client.get_company(symbol="UPPER")
-    print(data.daily_trade.high_price)
+    print(data.security_daily_trade_dto.high_price)
     await client.close()
 
 

@@ -42,7 +42,7 @@ async def main():
     data = await client.get_company(symbol="UPPER")
 
     # Prints the highest price for that company today
-    print(data.daily_trade.high_price)
+    print(data.security_daily_trade_dto.high_price)
 
     # Properly closes the session
     await client.close()
