@@ -52,6 +52,11 @@ loop = asyncio.get_event_loop()
 loop.run_until_complete(main())
 ```
 
+## Why are the attributes so in-costistent?
+
+The attribues are in-consistent because the attributes are set according to the response set by the API. I tried changing 
+it up but that would be distruptive because the comability with the API would be broken. 
+
 ## Documentation?
 
 Documentation is still in progress!
