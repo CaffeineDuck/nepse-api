@@ -70,7 +70,7 @@ class SecurityClient:
         data = await (await self._session.get(f"{BASE_URL}/{id}")).json()
         if not data:
             raise NotFound()
-            
+
         data = humps.decamelize(data)
 
         model = SecurityResponse(**data)

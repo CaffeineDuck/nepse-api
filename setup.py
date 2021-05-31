@@ -1,4 +1,5 @@
 import pathlib
+
 import setuptools
 
 # The directory containing this file
@@ -9,7 +10,7 @@ README = (HERE / "README.md").read_text()
 
 setuptools.setup(
     name="nepse-api",
-    version="0.2.2",
+    version="0.3",
     author="Samrid Pandit",
     author_email="samrid.pandit@gmail.com",
     description="This is a API wrapper for NEPSE API.",
@@ -23,7 +24,7 @@ setuptools.setup(
     ],
     python_requires=">3.7",
     keywords="api-wrapper stock",
-    install_requires=["aiohttp", "cachetools"],
+    install_requires=["aiohttp", "cachetools", "pyhumps"],
     project_urls={
         "Homepage": "https://github.com/Samrid-Pandit/nepse-api/",
     },

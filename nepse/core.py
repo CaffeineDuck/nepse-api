@@ -1,7 +1,8 @@
-from nepse.security.types import SecurityResponse
 from typing import Optional
 
 import aiohttp
+
+from nepse.security.types import SecurityResponse
 
 from .security import SecurityClient
 

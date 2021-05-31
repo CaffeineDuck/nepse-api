@@ -9,4 +9,5 @@ async def main():
     print(data.daily_trade.high_price)
     await client.close()
 
+
 asyncio.run(main())
