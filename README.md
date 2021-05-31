@@ -26,7 +26,7 @@ How is this better than [PyPi Nepse](https://github.com/pyFrappe/nepse)?
 ## APIs used
 
 The APIs that I used to create this API wrapper is:
-- https://newweb.nepalstock.com/api/nots/security/
+- https://newweb.nepalstock.com/api/
 
 ## How to use?
 
