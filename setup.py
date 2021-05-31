@@ -10,7 +10,7 @@ README = (HERE / "README.md").read_text()
 
 setuptools.setup(
     name="nepse-api",
-    version="0.3",
+    version="0.3.1",
     author="Samrid Pandit",
     author_email="samrid.pandit@gmail.com",
     description="This is a API wrapper for NEPSE API.",
