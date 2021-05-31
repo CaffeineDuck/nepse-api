@@ -5,3 +5,7 @@ __pycache__/
 dist/
 build/
 nepse_api.egg-info/
+
+#Test
+test/
+nepse/__main__.py

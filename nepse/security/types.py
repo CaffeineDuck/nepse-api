@@ -40,6 +40,8 @@ class Company:
     website: str
     contact_person: str
     sector_master: SectorMaster
+    registration_number: int
+    active_status: str
 
 
 @dataclass
