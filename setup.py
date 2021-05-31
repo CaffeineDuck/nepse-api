@@ -2,7 +2,13 @@ import pathlib
 
 import setuptools
 
-from nepse import *
+from nepse import (
+    __author__,
+    __author_email__,
+    __package_description__,
+    __package_name__,
+    __version__,
+)
 
 # The directory containing this file
 HERE = pathlib.Path(__file__).parent
