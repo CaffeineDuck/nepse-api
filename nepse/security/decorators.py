@@ -6,6 +6,6 @@ def is_cached(func):
     async def predicate(self, *args, **kwargs):
         if not self._securities_basic_cache:
             await self._update_basic_securities_cache()
-        await func(self, *args, **kwargs)
+        return await func(self, *args, **kwargs)
 
-    predicate
+    return predicate
