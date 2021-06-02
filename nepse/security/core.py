@@ -1,15 +1,23 @@
-import asyncio
-from typing import AsyncIterator, List, Mapping, Optional
+from nepse.errors import NotFound
+from nepse.security.types import (
+    LiveSecurityTrade,
+    SecurityResponse,
+    SecurityResponseDetailed,
+)
+from typing import List, Mapping, Optional
 
 import humps
-from cachetools import LRUCache, TTLCache
-
-from nepse.errors import APIError, NotFound, SymbolOrIdNotPassed
-from nepse.security.decorators import securities_are_cached
-from nepse.security.types import BaseSecurity, SecurityResponse
+from cachetools import TTLCache
 from nepse.utils import ClientWrapperHTTPX
+from nepse.utils import get
+
+from .decorators import securities_are_cached
 
 BASE_URL = "https://newweb.nepalstock.com/api/nots/security"
+BASE_SECURITIES_URL = "https://newweb.nepalstock.com/api/nots/securityDailyTradeStat/58"
+BASE_LIVE_TRADE_URL = (
+    "https://newweb.nepalstock.com/api/nots/nepse-data/today-price?&size=500&sort=true"
+)
 
 
 class SecurityClient:
@@ -20,105 +28,106 @@ class SecurityClient:
         use_cache: Optional[bool] = False,
     ) -> None:
         self._client_wrapper = client_wrapper
-        self._securities_basic_cache: Mapping[str, BaseSecurity] = LRUCache(1000)
-        self._securities_full_cache: Mapping[int, SecurityResponse] = TTLCache(
-            100, cache_retain_time
-        )
+        self._cache_retain_time = cache_retain_time
         self._use_cache = use_cache
 
-    def _create_security_model(self, model: BaseSecurity) -> None:
-        self._securities_basic_cache[model.symbol] = model
-
-    def _get_security_model(self, symbol: str) -> BaseSecurity:
-        return self._securities_basic_cache.get(symbol)
-
-    def _create_security_cache(self, model: SecurityResponse) -> None:
-        self._securities_full_cache[model.security_id] = model
-
-    def _get_security_cache(self, security_id: int) -> SecurityResponse:
-        return self._securities_full_cache.get(security_id)
-
-    async def _update_basic_securities_cache(self) -> None:
-        await self._fetch_all_base_securities()
-
-    async def _fetch_all_base_securities(self) -> List[BaseSecurity]:
-        securities = await self._client_wrapper.get_json(f"{BASE_URL}?nonDelisted=true")
-
-        def create_security_object(security: dict):
-            data = humps.decamelize(security)
-            model = BaseSecurity(**data)
-            self._create_security_model(model)
-            return model
-
-        securities_objects = [
-            create_security_object(security) for security in securities
-        ]
-        return securities_objects
-
-    async def _fetch_company(self, id: int):
-        data = await self._client_wrapper.get_json(f"{BASE_URL}/{id}")
-        if not data:
-            raise NotFound()
-
-        data = humps.decamelize(data)
-
-        model = SecurityResponse(**data)
-        self._create_security_cache(model)
-        return model
-
-    @securities_are_cached
-    async def get_company(
-        self,
-        id: Optional[int] = None,
-        symbol: Optional[str] = None,
-        use_cache: Optional[bool] = None,
-    ) -> SecurityResponse:
-        use_cache = use_cache or self._use_cache
-
-        if not id or symbol:
-            raise SymbolOrIdNotPassed()
-
-        if not id:
-            model = self._get_security_model(symbol)
-            if not model:
-                raise NotFound()
-            id = model.id
-
-        if use_cache:
-            model = self._get_security_cache(id)
-            if not model:
-                model = await self._fetch_company(id)
-        else:
-            model = await self._fetch_company(id)
-
-        return model
-
-    # Used a different function for better type support
-    @securities_are_cached
-    async def get_companies(self) -> List[BaseSecurity]:
-        base_securities = self._securities_basic_cache.values()
-        return base_securities
-
-    async def get_full_companies(
-        self, sleep_time: Optional[int] = 0.1
-    ) -> AsyncIterator[SecurityResponse]:
-        print(
-            "THIS FUNCTION SPAMS THE API "
-            "DON'T USE IT IF POSSIBLE, EVEN WHILE USING KEEP A REASONABLE RATE LIMIT! "
-            "USE THE `get_company()` FOR BASIC DATA, DON'T SPAM THE API! "
+        self._securities_cache: Mapping[str, SecurityResponse] = TTLCache(
+            1000, cache_retain_time
         )
 
-        base_securities = self._securities_basic_cache.values()
-        if not base_securities:
-            await self._fetch_all_base_securities()
+    def _create_security_cache(self, model: SecurityResponse) -> None:
+        self._securities_cache[model.symbol] = model
 
-        for security in base_securities:
-            try:
-                await asyncio.sleep(sleep_time)
-                data = await self._fetch_company(security.id)
-                yield data
-            except APIError:
-                print(
-                    f"Ignoring API Error for {self.get_full_companies.__name__}() "
-                    f"While fetching data for {BASE_URL}/{security.id} -> {security.symbol} \n"
+    def _get_security_cache(self, symbol: str) -> SecurityResponse:
+        self._securities_cache.get(symbol)
+
+    async def _fetch_security(self, symbol: str) -> SecurityResponse:
+        securities = await self._client_wrapper.get_json(BASE_SECURITIES_URL)
+
+        try:
+            security = (
+                list(
+                    filter(lambda company: company.get("symbol") == symbol, securities)
                 )
+            )[0]
+        except IndexError:
+            raise NotFound()
+
+        security = humps.decamelize(security)
+
+        return SecurityResponse(**security)
+
+    async def _fetch_securities(self) -> List[SecurityResponse]:
+        securities = await self._client_wrapper.get_json(BASE_SECURITIES_URL)
+
+        def handle_security(data: dict):
+            model = SecurityResponse(**(humps.decamelize(data)))
+            self._create_security_cache(model)
+
+        securities_model = [handle_security(security) for security in securities]
+        return securities_model
+
+    @securities_are_cached
+    async def _get_security(self, symbol: str) -> SecurityResponse:
+        return self._get_security_cache(symbol)
+
+    @securities_are_cached
+    async def _get_securities(self) -> List[SecurityResponse]:
+        return self._securities_cache.values()
+
+    async def get_company(
+        self, symbol: str, use_cache: Optional[bool] = None
+    ) -> SecurityResponse:
+        use_cache = use_cache if use_cache == None else self._use_cache
+
+        if use_cache:
+            company = await self._get_security(symbol)
+        else:
+            company = await self._fetch_security(symbol)
+
+        return company
+
+    async def get_companies(
+        self, use_cache: Optional[bool] = None
+    ) -> List[SecurityResponse]:
+        use_cache = use_cache if use_cache == None else self._use_cache
+
+        if use_cache:
+            companies = await self._get_securities()
+        else:
+            companies = await self._fetch_securities()
+
+        return companies
+
+    async def get_company_detailed(self, security_id: int) -> SecurityResponseDetailed:
+        detailed_company = await self._client_wrapper.get_json(
+            f"{BASE_URL}/{security_id}"
+        )
+
+        if not detailed_company:
+            raise NotFound()
+
+        detailed_company = humps.decamelize(detailed_company)
+        return SecurityResponseDetailed(**detailed_company)
+
+    async def get_company_live_price(self, symbol: str) -> LiveSecurityTrade:
+        live_prices = humps.decamelize(
+            (await self._client_wrapper.get_json(BASE_LIVE_TRADE_URL)).get("content")
+        )
+
+        try:
+            security = (
+                list(
+                    filter(lambda company: company.get("symbol") == symbol, live_prices)
+                )
+            )[0]
+        except IndexError:
+            raise NotFound()
+
+        return LiveSecurityTrade(**security)
+
+    async def get_companies_live_prices(self) -> List[LiveSecurityTrade]:
+        live_prices = humps.decamelize(
+            (await self._client_wrapper.get_json(BASE_LIVE_TRADE_URL)).get("content")
+        )
+        return [LiveSecurityTrade(**model) for model in live_prices]
