@@ -1,8 +1,11 @@
 import functools
 from inspect import iscoroutinefunction
+from typing import Callable, TypeVar
+
+_T = TypeVar("_T")
 
 
-def securities_are_cached(func):
+def securities_are_cached(func: _T) -> _T:
     @functools.wraps(func)
     async def predicate(self, *args, **kwargs):
         if not self._securities_basic_cache:
