@@ -14,3 +14,8 @@ class SymbolOrIdNotPassed(NepseException):
 class NotFound(NepseException):
     def __str__(self) -> str:
         return "The given details was not found!"
+
+
+class APIError(NepseException):
+    def __str__(self) -> str:
+        return "The data couldn't be fetched from the NEPSE API for this"
