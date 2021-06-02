@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "nepse-api"
+version = "0.4.2"
+description = "This is a API wrapper for NEPSE API."
+authors = ["Samrid Pandit <samrid.pandit@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/Samrid-Pandit/nepse-api/"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Software Development :: Libraries :: Python Modules"
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+cachetools = "^4.2.2"
+pyhumps = "^3.0.2"
+httpx = "^0.18.1"
+
+[tool.poetry.dev-dependencies]
+black = "^21.5b2"
+isort = "^5.8.0"
+pytest = "^6.2.4"
+pytest-asyncio = "^0.15.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
