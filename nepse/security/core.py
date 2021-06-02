@@ -1,10 +1,10 @@
-from typing import AsyncIterator, Generator, List, Optional
+from typing import AsyncIterator, List, Optional
 
 import humps
 from cachetools import LRUCache, TTLCache
 
 from nepse.errors import NotFound, SymbolOrIdNotPassed
-from nepse.security.decorators import is_cached
+from nepse.security.decorators import securities_are_cached
 from nepse.security.types import BaseSecurity, SecurityResponse
 from nepse.utils import ClientWrapperHTTPX
 
@@ -63,7 +63,7 @@ class SecurityClient:
         self._create_security_cache(model)
         return model
 
-    @is_cached
+    @securities_are_cached
     async def _get_or_fetch_company(
         self,
         id: Optional[int] = None,
@@ -101,14 +101,14 @@ class SecurityClient:
         return await self._get_or_fetch_company(id, symbol, use_cache)
 
     async def get_full_companies(self) -> AsyncIterator[SecurityResponse]:
-        base_securities = self._security_client._securities_basic_cache.values()
+        base_securities = self._securities_basic_cache.values()
         if not base_securities:
             await self._fetch_all_base_securities()
 
         for security in base_securities:
             yield await self._fetch_company(security.id)
 
-    @is_cached
-    def get_companies(self) -> List[BaseSecurity]:
-        base_securities = self._security_client._securities_basic_cache.values()
+    @securities_are_cached
+    async def get_companies(self) -> List[BaseSecurity]:
+        base_securities = self._securities_basic_cache.values()
         return base_securities
