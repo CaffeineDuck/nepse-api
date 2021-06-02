@@ -32,10 +32,11 @@ The APIs that I used to create this API wrapper is:
 
 ```py
 import asyncio
+import httpx
 from nepse import Client
 
 async def main():
-    
+
     # Doing this is optional you can directly
     # Initialize using `client = Client()` as well
     async with httpx.AsyncClient() as async_client:
