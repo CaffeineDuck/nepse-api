@@ -24,6 +24,15 @@ class MarketClient:
         return False
 
     async def check_IPO(self, scrip, boid) -> bool:
+        """Checks if the given user got the IPO
+
+        Args:
+            scrip (Any): The Script
+            boid (int): The boid
+
+        Returns:
+            bool: Returns if the user got alloted in the IPO
+        """
         scripID = [
             resp["id"]
             for resp in self._client_wrapper.get_json(

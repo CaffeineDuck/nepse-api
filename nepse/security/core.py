@@ -78,6 +78,16 @@ class SecurityClient:
     async def get_company(
         self, symbol: str, use_cache: Optional[bool] = None
     ) -> SecurityResponse:
+        """Get company by its `symbol`
+
+        Args:
+            symbol (str): The symbol of the company/security
+            use_cache (Optional[bool]): Use cache or fetch from API.Defaults to `use_cache` user provided during
+                                        initializtion of `nepse`.
+
+        Returns:
+            SecurityResponse: The response object
+        """
         use_cache = use_cache if use_cache == None else self._use_cache
 
         if use_cache:
@@ -90,6 +100,15 @@ class SecurityClient:
     async def get_companies(
         self, use_cache: Optional[bool] = None
     ) -> List[SecurityResponse]:
+        """Returns all the companies/securities
+
+        Args:
+            use_cache (Optional[bool]): Use cache or fetch from API.Defaults to `use_cache` user provided during
+                initializtion of `nepse`.
+
+        Returns:
+            List[SecurityResponse]: List of the response object
+        """
         use_cache = use_cache if use_cache == None else self._use_cache
 
         if use_cache:
@@ -100,6 +119,17 @@ class SecurityClient:
         return companies
 
     async def get_company_detailed(self, security_id: int) -> SecurityResponseDetailed:
+        """Returns the detailed object of a company
+
+        Args:
+            security_id (int): The security_id of the company/security_id
+
+        Raises:
+            NotFound: Raised if the given `security_id` is not valid
+
+        Returns:
+            SecurityResponseDetailed: A detailed response object of the company
+        """
         detailed_company = await self._client_wrapper.get_json(
             f"{BASE_URL}/{security_id}"
         )
@@ -111,6 +141,17 @@ class SecurityClient:
         return SecurityResponseDetailed(**detailed_company)
 
     async def get_company_live_price(self, symbol: str) -> LiveSecurityTrade:
+        """Returns the live prices of the company_id
+
+        Args:
+            symbol (str): Symbol of the company to fetch
+
+        Raises:
+            NotFound:  Raised if the given `symbol` is not valid
+
+        Returns:
+            LiveSecurityTrade: Object with live trade data
+        """
         live_prices = humps.decamelize(
             (await self._client_wrapper.get_json(BASE_LIVE_TRADE_URL)).get("content")
         )
@@ -127,6 +168,12 @@ class SecurityClient:
         return LiveSecurityTrade(**security)
 
     async def get_companies_live_prices(self) -> List[LiveSecurityTrade]:
+        """Returns all the companies taking part in the trade today
+
+        Returns:
+            List[LiveSecurityTrade]: List of Objects containing the live trade data of 
+                companies
+        """
         live_prices = humps.decamelize(
             (await self._client_wrapper.get_json(BASE_LIVE_TRADE_URL)).get("content")
         )
