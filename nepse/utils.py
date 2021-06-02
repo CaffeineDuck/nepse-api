@@ -10,4 +10,3 @@ class ClientWrapperHTTPX:
 
     async def get_json(self, url) -> object:
         return (await self._client.get(url)).json()
-      
