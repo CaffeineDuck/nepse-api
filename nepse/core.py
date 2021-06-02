@@ -17,9 +17,13 @@ class Client:
     ) -> None:
         self._session = httpx_client or httpx.AsyncClient()
         self._client_wrapper = ClientWrapperHTTPX(self._session)
-        self.security_client = SecurityClient(
+        self._security_client = SecurityClient(
             self._client_wrapper, cache_retain_time, use_cache
         )
+
+    @property
+    def security_client(self) -> SecurityClient:
+        return self._security_client
 
     async def close(self) -> None:
         await self._session.aclose()
