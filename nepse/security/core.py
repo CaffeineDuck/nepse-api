@@ -12,10 +12,11 @@ BASE_URL = "https://newweb.nepalstock.com/api/nots/security"
 
 
 class SecurityClient:
-    def __init__(self, client_wrapper: ClientWrapperHTTPX) -> None:
+    def __init__(self, client_wrapper: ClientWrapperHTTPX, cache_retain_time: Optional[int] = 60, use_cache: Optional[bool] = False) -> None:
         self._client_wrapper = client_wrapper
         self._securities_basic_cache = LRUCache(1000)
-        self._securities_full_cache = TTLCache(100, 500)
+        self._securities_full_cache = TTLCache(100, cache_retain_time)
+        self._use_cache = use_cache
 
     def _create_security_model(self, model: BaseSecurity) -> None:
         self._securities_basic_cache[model.symbol] = model
@@ -61,7 +62,7 @@ class SecurityClient:
     async def get_company(
         self, id: Optional[int] = None, symbol: Optional[str] = None, use_cache: Optional[bool] = None
     ) -> SecurityResponse:
-        use_cache = use_cache or False
+        use_cache = use_cache or use_cache
 
         if not any(id or symbol):
             raise SymbolOrIdNotPassed()
