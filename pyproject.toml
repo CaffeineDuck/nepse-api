@@ -10,8 +10,9 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Topic :: Software Development :: Libraries :: Python Modules"
+    "Topic :: Software Development :: Libraries :: Python Modules",
 ]
+packages = [{ include = "nepse" }]
 
 [tool.poetry.dependencies]
 python = "^3.7"
