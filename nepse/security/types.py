@@ -1,5 +1,5 @@
 import datetime
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 
@@ -82,7 +82,10 @@ class Security:
     def __post_init__(self) -> None:
         self.company_id = Company(**self.company_id)
         self.instrument_type = Instrument(**self.instrument_type)
-        self.share_group_id = ShareGroup(**self.share_group_id)
+        try:
+            self.share_group_id = ShareGroup(**self.share_group_id)
+        except TypeError:
+            self.share_group_id = None
 
 
 @dataclass
