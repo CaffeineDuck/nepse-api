@@ -35,17 +35,18 @@ import asyncio
 from nepse import Client
 
 async def main():
-    # Initializes the client
-    client = Client()
+    
+    # Doing this is optional you can directly
+    # Initialize using `client = Client()` as well
+    async with httpx.AsyncClient() as async_client:
+        # Initializes the client
+        client = Client(httpx_client=async_client)
 
-    # Gets the data
-    data = await client.security_client.get_company(symbol="UPPER")
+        # Gets the data
+        data = await client.security_client.get_company(symbol="UPPER")
 
-    # Prints the highest price for that company today
-    print(data.security_daily_trade_dto.high_price)
-
-    # Properly closes the session
-    await client.close()
+        # Prints the highest price for that company today
+        print(data.security_daily_trade_dto.high_price)
     
 # Run the function
 loop = asyncio.get_event_loop()
