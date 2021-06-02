@@ -1,9 +1,10 @@
+import asyncio
 from typing import AsyncIterator, List, Mapping, Optional
 
 import humps
 from cachetools import LRUCache, TTLCache
 
-from nepse.errors import NotFound, SymbolOrIdNotPassed
+from nepse.errors import APIError, NotFound, SymbolOrIdNotPassed
 from nepse.security.decorators import securities_are_cached
 from nepse.security.types import BaseSecurity, SecurityResponse
 from nepse.utils import ClientWrapperHTTPX
@@ -41,7 +42,7 @@ class SecurityClient:
         await self._fetch_all_base_securities()
 
     async def _fetch_all_base_securities(self) -> List[BaseSecurity]:
-        securities = await self._client_wrapper.get_json(BASE_URL)
+        securities = await self._client_wrapper.get_json(f"{BASE_URL}?nonDelisted=true")
 
         def create_security_object(security: dict):
             data = humps.decamelize(security)
@@ -74,7 +75,7 @@ class SecurityClient:
     ) -> SecurityResponse:
         use_cache = use_cache or self._use_cache
 
-        if not any(id or symbol):
+        if not id or symbol:
             raise SymbolOrIdNotPassed()
 
         if not id:
@@ -98,10 +99,26 @@ class SecurityClient:
         base_securities = self._securities_basic_cache.values()
         return base_securities
 
-    async def get_full_companies(self) -> AsyncIterator[SecurityResponse]:
+    async def get_full_companies(
+        self, sleep_time: Optional[int] = 0.1
+    ) -> AsyncIterator[SecurityResponse]:
+        print(
+            "THIS FUNCTION SPAMS THE API "
+            "DON'T USE IT IF POSSIBLE, EVEN WHILE USING KEEP A REASONABLE RATE LIMIT! "
+            "USE THE `get_company()` FOR BASIC DATA, DON'T SPAM THE API! "
+        )
+
         base_securities = self._securities_basic_cache.values()
         if not base_securities:
             await self._fetch_all_base_securities()
 
         for security in base_securities:
-            yield await self._fetch_company(security.id)
+            try:
+                await asyncio.sleep(sleep_time)
+                data = await self._fetch_company(security.id)
+                yield data
+            except APIError:
+                print(
+                    f"Ignoring API Error for {self.get_full_companies.__name__}() "
+                    f"While fetching data for {BASE_URL}/{security.id} -> {security.symbol} \n"
+                )
