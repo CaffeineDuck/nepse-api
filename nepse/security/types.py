@@ -106,7 +106,7 @@ class DailyTrade:
 
 
 @dataclass
-class SecurityResponse:
+class SecurityResponseDetailed:
     security_daily_trade_dto: DailyTrade
     security: Security
     stock_listed_shares: int
@@ -126,9 +126,40 @@ class SecurityResponse:
 
 
 @dataclass
-class BaseSecurity:
-    id: int
-    symbol: str
-    name: str
-    active_status: str
+class SecurityResponse:
+    security_id: int
     security_name: str
+    symbol: int
+    index_id: int
+    open_price: int
+    high_price: int
+    low_price: int
+    total_trade_quantity: int
+    last_traded_price: int
+    percentage_change: float
+    last_updated_date_time: datetime.datetime
+    last_traded_volume: Any
+    previous_close: int
+
+
+@dataclass
+class LiveSecurityTrade:
+    id: int
+    business_date: datetime.date
+    security_id: int
+    symbol: str
+    security_name: str
+    open_price: int
+    high_price: int
+    low_price: int
+    close_price: int
+    total_traded_quantity: int
+    total_traded_value: int
+    previous_day_close_price: int
+    fifty_two_week_high: int
+    fifty_two_week_low: int
+    last_updated_time: datetime.datetime
+    last_updated_price: int
+    total_trades: int
+    average_traded_price: float
+    market_capitalization: float
