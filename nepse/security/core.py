@@ -1,4 +1,4 @@
-from typing import AsyncIterator, List, Optional
+from typing import AsyncIterator, List, Mapping, Optional
 
 import humps
 from cachetools import LRUCache, TTLCache
@@ -19,8 +19,10 @@ class SecurityClient:
         use_cache: Optional[bool] = False,
     ) -> None:
         self._client_wrapper = client_wrapper
-        self._securities_basic_cache = LRUCache(1000)
-        self._securities_full_cache = TTLCache(100, cache_retain_time)
+        self._securities_basic_cache: Mapping[str, BaseSecurity] = LRUCache(1000)
+        self._securities_full_cache: Mapping[int, SecurityResponse] = TTLCache(
+            100, cache_retain_time
+        )
         self._use_cache = use_cache
 
     def _create_security_model(self, model: BaseSecurity) -> None:
@@ -64,7 +66,7 @@ class SecurityClient:
         return model
 
     @securities_are_cached
-    async def _get_or_fetch_company(
+    async def get_company(
         self,
         id: Optional[int] = None,
         symbol: Optional[str] = None,
@@ -91,14 +93,10 @@ class SecurityClient:
         return model
 
     # Used a different function for better type support
-    # As the `@is_cached` decorator messes that up!
-    async def get_company(
-        self,
-        id: Optional[int] = None,
-        symbol: Optional[str] = None,
-        use_cache: Optional[bool] = None,
-    ) -> SecurityResponse:
-        return await self._get_or_fetch_company(id, symbol, use_cache)
+    @securities_are_cached
+    async def get_companies(self) -> List[BaseSecurity]:
+        base_securities = self._securities_basic_cache.values()
+        return base_securities
 
     async def get_full_companies(self) -> AsyncIterator[SecurityResponse]:
         base_securities = self._securities_basic_cache.values()
@@ -107,8 +105,3 @@ class SecurityClient:
 
         for security in base_securities:
             yield await self._fetch_company(security.id)
-
-    @securities_are_cached
-    async def get_companies(self) -> List[BaseSecurity]:
-        base_securities = self._securities_basic_cache.values()
-        return base_securities
