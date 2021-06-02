@@ -1,8 +1,8 @@
-from typing import AsyncIterator, Optional
+from nepse.market.core import MarketClient
+from typing import  Optional
 
 import httpx
 
-from nepse.security.types import SecurityResponse
 from nepse.utils import ClientWrapperHTTPX
 
 from .security import SecurityClient
@@ -20,10 +20,15 @@ class Client:
         self._security_client = SecurityClient(
             self._client_wrapper, cache_retain_time, use_cache
         )
+        self._market_client = MarketClient(self._client_wrapper)
 
     @property
     def security_client(self) -> SecurityClient:
         return self._security_client
+
+    @property
+    def market_client(self) -> MarketClient:
+        return self._market_client
 
     async def close(self) -> None:
         await self._session.aclose()
