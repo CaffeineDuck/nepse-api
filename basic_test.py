@@ -18,7 +18,7 @@ async def test_right_security_data():
     api_data = humps.decamelize(data)
     await session.aclose()
 
-    nepse_client = Client()
+    nepse_client = Client(True, 10)
     wrapper_data = asdict(
         await nepse_client.security_client.get_company(symbol="UPPER")
     )
