@@ -12,7 +12,12 @@ BASE_URL = "https://newweb.nepalstock.com/api/nots/security"
 
 
 class SecurityClient:
-    def __init__(self, client_wrapper: ClientWrapperHTTPX, cache_retain_time: Optional[int] = 60, use_cache: Optional[bool] = False) -> None:
+    def __init__(
+        self,
+        client_wrapper: ClientWrapperHTTPX,
+        cache_retain_time: Optional[int] = 60,
+        use_cache: Optional[bool] = False,
+    ) -> None:
         self._client_wrapper = client_wrapper
         self._securities_basic_cache = LRUCache(1000)
         self._securities_full_cache = TTLCache(100, cache_retain_time)
@@ -59,10 +64,13 @@ class SecurityClient:
         return model
 
     @is_cached
-    async def get_company(
-        self, id: Optional[int] = None, symbol: Optional[str] = None, use_cache: Optional[bool] = None
+    async def _get_or_fetch_company(
+        self,
+        id: Optional[int] = None,
+        symbol: Optional[str] = None,
+        use_cache: Optional[bool] = None,
     ) -> SecurityResponse:
-        use_cache = use_cache or use_cache
+        use_cache = use_cache or self._use_cache
 
         if not any(id or symbol):
             raise SymbolOrIdNotPassed()
@@ -81,6 +89,16 @@ class SecurityClient:
             model = await self._fetch_company(id)
 
         return model
+
+    # Used a different function for better type support
+    # As the `@is_cached` decorator messes that up!
+    async def get_company(
+        self,
+        id: Optional[int] = None,
+        symbol: Optional[str] = None,
+        use_cache: Optional[bool] = None,
+    ) -> SecurityResponse:
+        return await self._get_or_fetch_company(id, symbol, use_cache)
 
     async def get_full_companies(self) -> AsyncIterator[SecurityResponse]:
         base_securities = self._security_client._securities_basic_cache.values()
