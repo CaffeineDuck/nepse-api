@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import AsyncIterator, Generator, List, Optional
 
 import humps
 from cachetools import LRUCache, TTLCache
@@ -17,28 +17,28 @@ class SecurityClient:
         self._securities_basic_cache = LRUCache(1000)
         self._securities_full_cache = TTLCache(100, 500)
 
-    def create_security_model(self, model: BaseSecurity) -> None:
+    def _create_security_model(self, model: BaseSecurity) -> None:
         self._securities_basic_cache[model.symbol] = model
 
-    def get_security_model(self, symbol: str) -> BaseSecurity:
+    def _get_security_model(self, symbol: str) -> BaseSecurity:
         return self._securities_basic_cache.get(symbol)
 
-    def create_security_cache(self, model: SecurityResponse) -> None:
+    def _create_security_cache(self, model: SecurityResponse) -> None:
         self._securities_full_cache[model.security_id] = model
 
-    def get_security_cache(self, security_id: int) -> SecurityResponse:
+    def _get_security_cache(self, security_id: int) -> SecurityResponse:
         return self._securities_full_cache.get(security_id)
 
     async def _update_basic_securities_cache(self) -> None:
-        await self.fetch_all_base_securities()
+        await self._fetch_all_base_securities()
 
-    async def fetch_all_base_securities(self) -> List[BaseSecurity]:
+    async def _fetch_all_base_securities(self) -> List[BaseSecurity]:
         securities = await self._client_wrapper.get_json(BASE_URL)
 
         def create_security_object(security: dict):
             data = humps.decamelize(security)
             model = BaseSecurity(**data)
-            self.create_security_model(model)
+            self._create_security_model(model)
             return model
 
         securities_objects = [
@@ -46,26 +46,7 @@ class SecurityClient:
         ]
         return securities_objects
 
-    @is_cached
-    async def get_security_response(
-        self, id: Optional[int], symbol: Optional[str]
-    ) -> SecurityResponse:
-        if not any(id or symbol):
-            raise SymbolOrIdNotPassed()
-
-        if not id:
-            model = self.get_security_model(symbol)
-            if not model:
-                raise NotFound()
-            id = model.id
-
-        model = self.get_security_cache(id)
-        if not model:
-            model = await self.fetch_security_response(id)
-
-        return model
-
-    async def fetch_security_response(self, id: int):
+    async def _fetch_company(self, id: int):
         data = await self._client_wrapper.get_json(f"{BASE_URL}/{id}")
         if not data:
             raise NotFound()
@@ -73,5 +54,42 @@ class SecurityClient:
         data = humps.decamelize(data)
 
         model = SecurityResponse(**data)
-        self.create_security_cache(model)
+        self._create_security_cache(model)
         return model
+
+    @is_cached
+    async def get_company(
+        self, id: Optional[int] = None, symbol: Optional[str] = None, use_cache: Optional[bool] = None
+    ) -> SecurityResponse:
+        use_cache = use_cache or False
+
+        if not any(id or symbol):
+            raise SymbolOrIdNotPassed()
+
+        if not id:
+            model = self._get_security_model(symbol)
+            if not model:
+                raise NotFound()
+            id = model.id
+
+        if use_cache:
+            model = self._get_security_cache(id)
+            if not model:
+                model = await self._fetch_company(id)
+        else:
+            model = await self._fetch_company(id)
+
+        return model
+
+    async def get_full_companies(self) -> AsyncIterator[SecurityResponse]:
+        base_securities = self._security_client._securities_basic_cache.values()
+        if not base_securities:
+            await self._fetch_all_base_securities()
+
+        for security in base_securities:
+            yield await self._fetch_company(security.id)
+
+    @is_cached
+    def get_companies(self) -> List[BaseSecurity]:
+        base_securities = self._security_client._securities_basic_cache.values()
+        return base_securities
