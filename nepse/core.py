@@ -10,9 +10,12 @@ from .security import SecurityClient
 
 class Client:
     def __init__(
-        self, use_cache: Optional[bool], cache_retain_time: Optional[int]
+        self,
+        httpx_client: Optional[httpx.AsyncClient] = None,
+        use_cache: Optional[bool] = False,
+        cache_retain_time: Optional[int] = 60,
     ) -> None:
-        self._session = httpx.AsyncClient()
+        self._session = httpx_client or httpx.AsyncClient()
         self._client_wrapper = ClientWrapperHTTPX(self._session)
         self.security_client = SecurityClient(
             self._client_wrapper, cache_retain_time, use_cache
