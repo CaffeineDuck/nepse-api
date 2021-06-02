@@ -1,3 +1,5 @@
+from json import JSONDecodeError
+from nepse.errors import APIError
 from operator import attrgetter
 from typing import Any, Iterable, Optional, TypeVar
 
@@ -12,7 +14,10 @@ class ClientWrapperHTTPX:
     _client: httpx.AsyncClient
 
     async def get_json(self, url) -> object:
-        return (await self._client.get(url)).json()
+        try:
+            return (await self._client.get(url)).json()
+        except JSONDecodeError:
+            raise APIError()
 
 
 def get(iterable: Iterable[T], **attrs: Any) -> Optional[T]:
