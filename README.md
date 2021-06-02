@@ -47,7 +47,7 @@ async def main():
         data = await client.security_client.get_company(symbol="UPPER")
 
         # Prints the highest price for that company today
-        print(data.security_daily_trade_dto.high_price)
+        print(data.high_price)
     
 # Run the function
 loop = asyncio.get_event_loop()
