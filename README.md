@@ -8,6 +8,11 @@ and usable way.
 
 This is a API wrapper for NEPSE API. This project was inspired from [PyPi Nepse](https://github.com/pyFrappe/nepse). 
 
+## Documentation
+
+There is a detailed guide in my documentation page for getting started and installing.
+[Documentation](https://nepse-api.readthedocs.io/)
+
 ## How to use?
 
 You can use this by package from [Nepse API PyPi](https://pypi.org/project/nepse-api/)
