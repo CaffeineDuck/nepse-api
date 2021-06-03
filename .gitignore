@@ -10,3 +10,8 @@ nepse_api.egg-info/
 test/
 nepse/__main__.py
 .pytest_cache/
+
+# Docs
+docs/_build/
+docs/_static/
+docs/_templates/
