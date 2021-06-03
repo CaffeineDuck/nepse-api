@@ -1,15 +1,15 @@
+from typing import List, Mapping, Optional
+
+import humps
+from cachetools import TTLCache
+
 from nepse.errors import NotFound
 from nepse.security.types import (
     LiveSecurityTrade,
     SecurityResponse,
     SecurityResponseDetailed,
 )
-from typing import List, Mapping, Optional
-
-import humps
-from cachetools import TTLCache
-from nepse.utils import ClientWrapperHTTPX
-from nepse.utils import get
+from nepse.utils import _ClientWrapperHTTPX, get
 
 from .decorators import securities_are_cached
 
@@ -23,7 +23,7 @@ BASE_LIVE_TRADE_URL = (
 class SecurityClient:
     def __init__(
         self,
-        client_wrapper: ClientWrapperHTTPX,
+        client_wrapper: _ClientWrapperHTTPX,
         cache_retain_time: Optional[int] = 60,
         use_cache: Optional[bool] = False,
     ) -> None:
@@ -42,7 +42,7 @@ class SecurityClient:
         self._securities_cache.get(symbol)
 
     async def _fetch_security(self, symbol: str) -> SecurityResponse:
-        securities = await self._client_wrapper.get_json(BASE_SECURITIES_URL)
+        securities = await self._client_wrapper._get_json(BASE_SECURITIES_URL)
 
         try:
             security = (
@@ -58,7 +58,7 @@ class SecurityClient:
         return SecurityResponse(**security)
 
     async def _fetch_securities(self) -> List[SecurityResponse]:
-        securities = await self._client_wrapper.get_json(BASE_SECURITIES_URL)
+        securities = await self._client_wrapper._get_json(BASE_SECURITIES_URL)
 
         def handle_security(data: dict):
             model = SecurityResponse(**(humps.decamelize(data)))
@@ -130,7 +130,7 @@ class SecurityClient:
         Returns:
             SecurityResponseDetailed: A detailed response object of the company
         """
-        detailed_company = await self._client_wrapper.get_json(
+        detailed_company = await self._client_wrapper._get_json(
             f"{BASE_URL}/{security_id}"
         )
 
@@ -153,7 +153,7 @@ class SecurityClient:
             LiveSecurityTrade: Object with live trade data
         """
         live_prices = humps.decamelize(
-            (await self._client_wrapper.get_json(BASE_LIVE_TRADE_URL)).get("content")
+            (await self._client_wrapper._get_json(BASE_LIVE_TRADE_URL)).get("content")
         )
 
         try:
@@ -171,10 +171,10 @@ class SecurityClient:
         """Returns all the companies taking part in the trade today
 
         Returns:
-            List[LiveSecurityTrade]: List of Objects containing the live trade data of 
+            List[LiveSecurityTrade]: List of Objects containing the live trade data of
                 companies
         """
         live_prices = humps.decamelize(
-            (await self._client_wrapper.get_json(BASE_LIVE_TRADE_URL)).get("content")
+            (await self._client_wrapper._get_json(BASE_LIVE_TRADE_URL)).get("content")
         )
         return [LiveSecurityTrade(**model) for model in live_prices]
