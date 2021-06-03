@@ -21,7 +21,7 @@ It looks something like this:
     async def main():
 
         # Initializes the client
-        client = Client(httpx_client=async_client)
+        client = Client()
 
         # Gets the data
         data = await client.security_client.get_company(symbol="UPPER")
