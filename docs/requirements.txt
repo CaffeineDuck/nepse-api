@@ -2,3 +2,4 @@ furo
 cachetools
 pyhumps 
 httpx 
+attrs
