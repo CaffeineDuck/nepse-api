@@ -1,3 +1,4 @@
+from nepse.broker.core import BrokerClient
 from typing import Optional
 
 import httpx
@@ -21,6 +22,17 @@ class Client:
             self._client_wrapper, cache_retain_time, use_cache
         )
         self._market_client = MarketClient(self._client_wrapper)
+        self._broker_client = BrokerClient()
+
+    @property
+    def broker_client(self) -> BrokerClient:
+        """Returns the initialized `BrokerClient`
+
+        Returns:
+            BrokerClient: It is the module through which you can interact with
+            API's brokers.
+        """
+        return self._broker_client
 
     @property
     def security_client(self) -> SecurityClient:
