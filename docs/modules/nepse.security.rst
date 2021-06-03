@@ -1,26 +1,18 @@
 Security Client
 ===============
 
-Methods
--------
+nepse.SecurityClient
+--------------------
 
 .. automodule:: nepse.security.core
    :members:
    :undoc-members:
    :show-inheritance:
 
-Types
------
+nepse.SecurityClient.types
+--------------------------
 
 .. automodule:: nepse.security.types
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: nepse.security
    :members:
    :undoc-members:
    :show-inheritance:

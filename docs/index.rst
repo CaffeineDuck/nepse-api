@@ -9,11 +9,12 @@ Welcome to nepse-api's documentation!
 nepse-api is a mordern, easy to use, feature-rich and async ready API wrapper
 for NEPSE.
 
-**Features:**
-- Modern Pythonic API using ``async``\/``await`` syntax
-- Easy to use with an object oriented design
-- Optimised for both speed and memory
-- Optional cache for faster data fetching
+Features
+--------
+*  Modern Pythonic API using ``async``\/``await`` syntax
+*  Easy to use with an object oriented design
+*  Optimised for both speed and memory
+*  Optional cache for faster data fetching
 
 Getting started
 -----------------
@@ -32,12 +33,21 @@ Is this your first time using the library? This is the place to get started!
    
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 3
+   :caption: Core:
 
-   ./modules/nepse
+   ./modules/core/Client
+   ./modules/core/errors
+   ./modules/core/utils
+
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Modules:
+   
    ./modules/nepse.security
    ./modules/nepse.market
+
 
 Indices and tables
 ==================

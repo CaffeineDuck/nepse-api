@@ -1,26 +1,26 @@
 Market Client
 =============
 
-Methods
--------
+nepse.MarketClient
+------------------
 
 .. automodule:: nepse.market.core
    :members:
    :undoc-members:
    :show-inheritance:
 
-Types 
------
+nepse.MarketClient.types
+------------------------
 
 .. automodule:: nepse.market.types
    :members:
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+.. Module contents
+.. ---------------
 
-.. automodule:: nepse.market
-   :members:
-   :undoc-members:
-   :show-inheritance:
+.. .. automodule:: nepse.market
+..    :members:
+..    :undoc-members:
+..    :show-inheritance:
