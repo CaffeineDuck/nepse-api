@@ -8,7 +8,7 @@ class NepseException(Exception):
 
 class NotFound(NepseException):
     def __str__(self) -> str:
-        return "The given details was not found!"
+        return "The Company name Provided was not found !"
 
 
 class APIError(NepseException):

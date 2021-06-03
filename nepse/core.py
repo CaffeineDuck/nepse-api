@@ -43,6 +43,5 @@ class Client:
         return self._market_client
 
     async def close(self) -> None:
-        """Properly disposes the session
-        """
+        """Properly disposes the session"""
         await self._session.aclose()
