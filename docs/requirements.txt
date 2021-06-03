@@ -1,1 +1,4 @@
 furo
+cachetools = "^4.2.2"
+pyhumps = "^3.0.2"
+httpx = "^0.18.1"
