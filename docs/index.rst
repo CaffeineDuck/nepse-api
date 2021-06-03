@@ -22,7 +22,12 @@ Getting started
 Is this your first time using the library? This is the place to get started!
 
 - **First steps:** :ref:`intro <intro>` | :ref:`quickstart <quickstart>`
-- **Examples:** Many examples are available in the :resource:`repository <examples>`.
+- **Examples:** Many examples are available in the `Examples`_.
+
+.. _Examples: https://github.com/Samrid-Pandit/nepse-api/tree/master/examples
+
+More Info
+---------
 
 .. toctree::
    :maxdepth: 2
