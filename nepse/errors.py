@@ -6,7 +6,6 @@ class NepseException(Exception):
         raise NotImplementedError()
 
 
-
 class NotFound(NepseException):
     def __str__(self) -> str:
         return "The given details was not found!"

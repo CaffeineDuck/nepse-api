@@ -57,9 +57,7 @@ html_theme = "sphinx_rtd_theme"
 # html_theme = "furo"
 
 
-html_conf = {
-    'examples': "https://github.com/Samrid-Pandit/nepse-api/"
-}
+html_conf = {"examples": "https://github.com/Samrid-Pandit/nepse-api/"}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
