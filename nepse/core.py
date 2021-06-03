@@ -24,11 +24,25 @@ class Client:
 
     @property
     def security_client(self) -> SecurityClient:
+        """Returns the initialized `SecurityClient`
+
+        Returns:
+            SecurityClient: It is the module through which you can interact with
+            API's securities and its data.
+        """
         return self._security_client
 
     @property
     def market_client(self) -> MarketClient:
+        """Returns the initialized `MarketClient`
+
+        Returns:
+            MarketClient: It is the module through which you can interact with
+            NEPSE's Market.
+        """
         return self._market_client
 
     async def close(self) -> None:
+        """Properly disposes the session
+        """
         await self._session.aclose()
