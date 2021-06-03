@@ -9,7 +9,7 @@ from nepse.security.types import (
     SecurityResponse,
     SecurityResponseDetailed,
 )
-from nepse.utils import _ClientWrapperHTTPX, get
+from nepse.utils import _ClientWrapperHTTPX
 
 from .decorators import securities_are_cached
 
@@ -82,7 +82,7 @@ class SecurityClient:
 
         Args:
             symbol (str): The symbol of the company/security
-            use_cache (Optional[bool]): Use cache or fetch from API.Defaults to `use_cache` user provided during
+            use_cache (Optional[bool]): Use cache or fetch from API. Defaults to `nepse.use_cache` user provided during
                                         initializtion of `nepse`.
 
         Returns:
@@ -103,7 +103,7 @@ class SecurityClient:
         """Returns all the companies/securities
 
         Args:
-            use_cache (Optional[bool]): Use cache or fetch from API.Defaults to `use_cache` user provided during
+            use_cache (Optional[bool]): Use cache or fetch from API. Defaults to `nepse.use_cache` user provided during
                 initializtion of `nepse`.
 
         Returns:
