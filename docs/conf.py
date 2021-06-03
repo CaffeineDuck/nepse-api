@@ -38,6 +38,12 @@ extensions = [
     "sphinx.ext.extlinks",
 ]
 
+autodoc_member_order = 'bysource'
+
+intersphinx_mapping = {
+    'py': ('https://docs.python.org/3', None),
+}
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
