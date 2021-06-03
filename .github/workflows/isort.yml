@@ -12,4 +12,4 @@ jobs:
           python-version: 3.9
       - uses: jamescurtin/isort-action@master
         with:
-            requirementsFiles: "requirements.txt requirements-dev.txt"
+            requirementsFiles: "poetry.lock"
