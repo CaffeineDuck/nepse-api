@@ -1,5 +1,7 @@
 from typing import List
+
 import humps
+
 from nepse.market.types import MarketCap
 from nepse.utils import _ClientWrapperHTTPX
 

@@ -1,6 +1,6 @@
 __pycache__/
 .vscode/
-__pycache__
+
 # Things for PyPi project
 dist/
 build/
