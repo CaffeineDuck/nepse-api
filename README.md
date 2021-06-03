@@ -36,8 +36,10 @@ The APIs that I used to create this API wrapper is:
 ## How to use?
 
 ```py
-import asyncio , httpx
+import asyncio
+import httpx
 from nepse import Client
+
 
 async def main():
     company_Symbol = input('Input Company Symbol (Uppercase): ')
@@ -54,7 +56,7 @@ async def main():
         print(f'High Price of{company_Symbol}: ', data.high_price)
         print(f'Low price of {company_Symbol}: ', data.low_price)
         print(f'Open Price of {company_Symbol}: ', data.open_price)
-    
+
 # Run the function
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())
