@@ -7,7 +7,7 @@ import humps
 import pytest
 
 from nepse import Client
-from nepse.utils import ClientWrapperHTTPX
+from nepse.utils import _ClientWrapperHTTPX
 
 
 @pytest.mark.asyncio
@@ -25,8 +25,8 @@ async def test_all_companies():
 async def test_right_detailed_security_data():
     async with httpx.AsyncClient() as async_client:
         await asyncio.sleep(0.1)
-        wrapper_client = ClientWrapperHTTPX(async_client)
-        data = await wrapper_client.get_json(
+        wrapper_client = _ClientWrapperHTTPX(async_client)
+        data = await wrapper_client._get_json(
             "https://newweb.nepalstock.com/api/nots/security/2792"
         )
         api_data = humps.decamelize(data)
@@ -45,8 +45,8 @@ async def test_right_detailed_security_data():
 async def test_right_security_data():
     async with httpx.AsyncClient() as async_client:
         await asyncio.sleep(0.1)
-        wrapper_client = ClientWrapperHTTPX(async_client)
-        data = await wrapper_client.get_json(
+        wrapper_client = _ClientWrapperHTTPX(async_client)
+        data = await wrapper_client._get_json(
             "https://newweb.nepalstock.com/api/nots/securityDailyTradeStat/58"
         )
         security = (
@@ -63,6 +63,7 @@ async def test_right_security_data():
 
     assert api_data == wrapper_data
 
+
 @pytest.mark.asyncio
 async def test_market_open():
     async with httpx.AsyncClient() as async_client:
@@ -74,9 +75,11 @@ async def test_market_open():
     async with httpx.AsyncClient() as async_client:
         await asyncio.sleep(0.1)
 
-        wrapper_client = ClientWrapperHTTPX(async_client)
-        response = await wrapper_client.get_json('https://newweb.nepalstock.com/api/nots/nepse-data/market-open')
-        if response['isOpen'] !='CLOSE':
+        wrapper_client = _ClientWrapperHTTPX(async_client)
+        response = await wrapper_client._get_json(
+            "https://newweb.nepalstock.com/api/nots/nepse-data/market-open"
+        )
+        if response["isOpen"] != "CLOSE":
             real_data = True
         real_data = False
 

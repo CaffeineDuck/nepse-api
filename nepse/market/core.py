@@ -1,13 +1,15 @@
 from typing import List
+
 import humps
+
 from nepse.market.types import MarketCap
-from nepse.utils import ClientWrapperHTTPX
+from nepse.utils import _ClientWrapperHTTPX
 
 BASE_URL = "https://newweb.nepalstock.com/api/nots"
 
 
 class MarketClient:
-    def __init__(self, client_wrapper: ClientWrapperHTTPX) -> None:
+    def __init__(self, client_wrapper: _ClientWrapperHTTPX) -> None:
         self._client_wrapper = client_wrapper
 
     async def market_is_open(self) -> bool:
@@ -16,7 +18,7 @@ class MarketClient:
         Returns:
             bool: Returns True if market is open and vice-versa
         """
-        response = await self._client_wrapper.get_json(
+        response = await self._client_wrapper._get_json(
             f"{BASE_URL}/nepse-data/market-open"
         )
         if response["isOpen"] != "CLOSE":
@@ -35,14 +37,14 @@ class MarketClient:
         """
         scripID = [
             resp["id"]
-            for resp in self._client_wrapper.get_json(
+            for resp in self._client_wrapper._get_json(
                 "https://iporesult.cdsc.com.np/result/companyShares/fileUploaded"
             )["body"]
             if resp["scrip"] == scrip.upper()
         ][0]
 
         return (
-            await self._client_wrapper.post_json(
+            await self._client_wrapper._post_json(
                 url="https://iporesult.cdsc.com.np/result/result/check",
                 body={"companyShareId": scripID, "boid": boid},
             )
@@ -54,7 +56,7 @@ class MarketClient:
         Returns:
             List[MarketCap]: Market Caps sorted by date
         """
-        resp = await self._client_wrapper.get_json(
+        resp = await self._client_wrapper._get_json(
             f"{BASE_URL}/nepse-data/marcapbydate/?"
         )
         data = humps.decamelize(resp)

@@ -1,9 +1,9 @@
-from nepse.market.core import MarketClient
-from typing import  Optional
+from typing import Optional
 
 import httpx
 
-from nepse.utils import ClientWrapperHTTPX
+from nepse.market.core import MarketClient
+from nepse.utils import _ClientWrapperHTTPX
 
 from .security import SecurityClient
 
@@ -16,7 +16,7 @@ class Client:
         cache_retain_time: Optional[int] = 60,
     ) -> None:
         self._session = httpx_client or httpx.AsyncClient()
-        self._client_wrapper = ClientWrapperHTTPX(self._session)
+        self._client_wrapper = _ClientWrapperHTTPX(self._session)
         self._security_client = SecurityClient(
             self._client_wrapper, cache_retain_time, use_cache
         )
