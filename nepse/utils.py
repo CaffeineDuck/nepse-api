@@ -1,11 +1,7 @@
-import json
+import json , attr , httpx
 from json import JSONDecodeError
 from operator import attrgetter
 from typing import Any, Iterable, Optional, TypeVar
-
-import attr
-import httpx
-
 from nepse.errors import APIError
 
 T = TypeVar("T")

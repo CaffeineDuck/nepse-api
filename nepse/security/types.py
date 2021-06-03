@@ -129,7 +129,7 @@ class SecurityResponseDetailed:
 class SecurityResponse:
     security_id: int
     security_name: str
-    symbol: int
+    symbol: str
     index_id: int
     open_price: int
     high_price: int
