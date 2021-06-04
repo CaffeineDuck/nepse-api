@@ -130,7 +130,7 @@ class SecurityClient:
         Returns:
             SecurityResponseDetailed: A detailed response object of the company
         """
-        detailed_company = await self._client_wrapper._get_json(
+        detailed_company = await self._client_wrapper._post_json_defualt_header(
             f"{BASE_URL}/{security_id}"
         )
 
@@ -153,7 +153,11 @@ class SecurityClient:
             LiveSecurityTrade: Object with live trade data
         """
         live_prices = humps.decamelize(
-            (await self._client_wrapper._get_json(BASE_LIVE_TRADE_URL)).get("content")
+            (
+                await self._client_wrapper._post_json_defualt_header(
+                    BASE_LIVE_TRADE_URL
+                )
+            ).get("content")
         )
 
         try:
