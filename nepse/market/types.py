@@ -13,3 +13,8 @@ class MarketCap:
     def __post_init__(self) -> None:
         year, month, day = self.business_date.split("-")
         self.business_date = datetime.date(int(year), int(month), int(day))
+
+
+@dataclass
+class FloorSheet:
+    pass
