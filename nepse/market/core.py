@@ -1,8 +1,9 @@
+import asyncio
 from typing import List
 
 import humps
 
-from nepse.market.types import MarketCap
+from nepse.market.types import FloorSheet, MarketCap
 from nepse.utils import _ClientWrapperHTTPX
 
 BASE_URL = "https://newweb.nepalstock.com/api/nots"
@@ -61,3 +62,36 @@ class MarketClient:
         )
         data = humps.decamelize(resp)
         return [MarketCap(**model) for model in data]
+
+    async def get_floorsheets(self) -> List[FloorSheet]:
+        """Returns the floorsheet data for the current date
+
+        Returns:
+            List[FloorSheet]: List of floorsheet data in form of `FloorSheet`
+        """
+        contents = []
+        tasks = []
+
+        pages = (
+            await self._client_wrapper._get_json(f"{BASE_URL}/nepse-data/floorsheet")
+            .get("floorsheets")
+            .get("totalPages")
+        )
+
+        async def _get_floorsheet_page(page_no: int):
+            response = (
+                await self._client_wrapper._get_json(
+                    f"{BASE_URL}nots/nepse-data/floorsheet?page={page_no}&size=2000&sort=contractId,desc"
+                )
+                .get("floorsheets")
+                .get("content")
+            )
+            data = humps.decamelize(response)
+            return FloorSheet(**data)
+
+        for page_no in range(pages):
+            tasks.append(_get_floorsheet_page(page_no))
+
+        await asyncio.gather(*tasks)
+
+        return contents
