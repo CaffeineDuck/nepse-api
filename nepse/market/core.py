@@ -1,4 +1,10 @@
 import asyncio
+import queue
+import threading
+
+import httpx
+import requests
+from nepse.errors import NotFound
 from typing import List
 
 import humps
@@ -7,6 +13,18 @@ from nepse.market.types import FloorSheet, MarketCap
 from nepse.utils import _ClientWrapperHTTPX
 
 BASE_URL = "https://newweb.nepalstock.com/api/nots"
+SPOOF_HEADER = {
+    "authority": "newweb.nepalstock.com.np",
+    "sec-ch-ua": "^\\^Google",
+    "accept": "application/json, text/plain, */*",
+    "sec-ch-ua-mobile": "?0",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36",
+    "sec-fetch-site": "same-origin",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-dest": "empty",
+    "referer": "https://newweb.nepalstock.com.np/",
+    "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
+}
 
 
 class MarketClient:
@@ -73,25 +91,39 @@ class MarketClient:
         tasks = []
 
         pages = (
-            await self._client_wrapper._get_json(f"{BASE_URL}/nepse-data/floorsheet")
+            (
+                await self._client_wrapper._post_json_defualt_body(
+                    f"{BASE_URL}/nepse-data/floorsheet?size=500"
+                )
+            )
             .get("floorsheets")
             .get("totalPages")
         )
 
-        async def _get_floorsheet_page(page_no: int):
+        async def _create_model(data: dict) -> None:
+            data = humps.decamelize(data)
+            contents.append(FloorSheet(**data))
+
+        async def _get_floorsheet_page(page_no: int) -> None:
             response = (
-                await self._client_wrapper._get_json(
-                    f"{BASE_URL}nots/nepse-data/floorsheet?page={page_no}&size=2000&sort=contractId,desc"
+                (
+                    await self._client_wrapper._post_json_defualt_body(
+                        f"{BASE_URL}/nepse-data/floorsheet?page={page_no}&size=500&sort=contractId,desc"
+                    )
                 )
                 .get("floorsheets")
                 .get("content")
             )
-            data = humps.decamelize(response)
-            return FloorSheet(**data)
+
+            model_tasks = []
+            for data in response:
+                model_tasks.append(_create_model(data))
+
+            await asyncio.gather(*model_tasks)
+            await asyncio.sleep(2)
 
         for page_no in range(pages):
             tasks.append(_get_floorsheet_page(page_no))
 
         await asyncio.gather(*tasks)
-
         return contents
