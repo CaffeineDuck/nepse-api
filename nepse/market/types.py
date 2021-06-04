@@ -1,5 +1,6 @@
 import datetime
 from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass
@@ -17,4 +18,26 @@ class MarketCap:
 
 @dataclass
 class FloorSheet:
-    pass
+    id: int
+    contract_id: int
+    contract_type: Any
+    stock_symbol: str
+    buyer_member_id: int
+    seller_member_id: int
+    contract_quantity: int
+    contract_rate: int
+    contract_amount: int
+    business_date: datetime.date
+    trade_book_id: int
+    stock_id: int
+    buyer_broker_name: str
+    seller_broker_name: str
+    trade_time: datetime.datetime
+    security_name: str
+
+    def __post_init__(self) -> None:
+        self.buyer_member_id = int(self.buyer_member_id)
+        self.seller_member_id = int(self.seller_member_id)
+
+        year, month, day = self.business_date.split("-")
+        self.business_date = datetime.date(int(year), int(month), int(day))
