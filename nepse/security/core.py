@@ -130,7 +130,7 @@ class SecurityClient:
         Returns:
             SecurityResponseDetailed: A detailed response object of the company
         """
-        detailed_company = await self._client_wrapper._post_json_defualt_header(
+        detailed_company = await self._client_wrapper._post_json_defualt_body(
             f"{BASE_URL}/{security_id}"
         )
 
@@ -154,7 +154,7 @@ class SecurityClient:
         """
         live_prices = humps.decamelize(
             (
-                await self._client_wrapper._post_json_defualt_header(
+                await self._client_wrapper._post_json_defualt_body(
                     BASE_LIVE_TRADE_URL
                 )
             ).get("content")

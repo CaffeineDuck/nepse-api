@@ -26,7 +26,7 @@ async def test_right_detailed_security_data():
     async with httpx.AsyncClient() as async_client:
         await asyncio.sleep(0.1)
         wrapper_client = _ClientWrapperHTTPX(async_client)
-        data = await wrapper_client._post_json_defualt_header(
+        data = await wrapper_client._post_json_defualt_body(
             "https://newweb.nepalstock.com/api/nots/security/2792"
         )
         api_data = humps.decamelize(data)

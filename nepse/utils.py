@@ -23,7 +23,7 @@ class _ClientWrapperHTTPX:
 
     # Created this cause NEPSE API requires POST request
     # with `{"id": 678}` in body.
-    async def _post_json_defualt_header(self, url: str) -> object:
+    async def _post_json_defualt_body(self, url: str) -> object:
         body = {"id": 678}
         return (await self._client.post(url, json=body)).json()
 
