@@ -21,6 +21,12 @@ class _ClientWrapperHTTPX:
         except JSONDecodeError:
             raise APIError()
 
+    # Created this cause NEPSE API requires POST request
+    # with `{"id": 678}` in body.
+    async def _post_json_defualt_header(self, url: str) -> object:
+        body = {"id": 678}
+        return (await self._client.post(url, json=body)).json()
+
     async def _post_json(self, url: str, body: dict) -> object:
         """[summary]
 
@@ -31,8 +37,7 @@ class _ClientWrapperHTTPX:
         Returns:
             object: [description]
         """
-        content = json.dumps(body)
-        return (await self._client.post(url, content=content)).json()
+        return (await self._client.post(url, json=body)).json()
 
 
 def get(iterable: Iterable[T], **attrs: Any) -> Optional[T]:
