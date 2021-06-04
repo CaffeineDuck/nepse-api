@@ -154,9 +154,7 @@ class SecurityClient:
         """
         live_prices = humps.decamelize(
             (
-                await self._client_wrapper._post_json_defualt_body(
-                    BASE_LIVE_TRADE_URL
-                )
+                await self._client_wrapper._post_json_defualt_body(BASE_LIVE_TRADE_URL)
             ).get("content")
         )
 
