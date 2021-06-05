@@ -1,5 +1,6 @@
 import asyncio
 from dataclasses import asdict
+
 import httpx
 import humps
 import pytest
@@ -104,16 +105,6 @@ async def test_brokers():
         wrapper_broker = await client.broker_client.get_brokers()
 
     assert wrapper_broker
-
-
-@pytest.mark.asyncio
-async def test_raw_floorsheet():
-    async with httpx.AsyncClient() as async_client:
-
-        client = Client(httpx_client=async_client)
-        floorsheet = await client.market_client.get_floorsheets_raw()
-
-    assert floorsheet
 
 
 @pytest.mark.asyncio
