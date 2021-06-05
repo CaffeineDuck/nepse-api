@@ -61,7 +61,7 @@ class BrokerClient:
         """Get the broker by its attributes
 
         Args:
-            use_cache (Optional[bool]): To use or not to use cache while getting broker data. 
+            use_cache (Optional[bool]): To use or not to use cache while getting broker data.
                 Defaults to `nepse.Client.use_cache`
 
         Returns:
@@ -69,12 +69,12 @@ class BrokerClient:
 
         Examples:
             Getting Broker by member_code:
-            
+
             .. code-block:: python
 
                 imperial = client.broker_client.get_broker(member_code=45)
-                    
-                    
+
+
             Getting Broker by name:
 
             .. code-block:: python
