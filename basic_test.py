@@ -84,3 +84,25 @@ async def test_market_open():
         real_data = False
 
     assert real_data == market_wrapper_data
+
+
+@pytest.mark.asyncio
+async def test_broker():
+    async with httpx.AsyncClient() as async_client:
+        await asyncio.sleep(0.1)
+
+        client = Client(httpx_client=async_client)
+        wrapper_broker = await client.broker_client.get_broker(id=116)
+
+    assert wrapper_broker.member_name == "Ashutosh Brokerage & Securities (PVT) Ltd."
+
+
+@pytest.mark.asyncio
+async def test_brokers():
+    async with httpx.AsyncClient() as async_client:
+        await asyncio.sleep(0.1)
+
+        client = Client(httpx_client=async_client)
+        wrapper_broker = await client.broker_client.get_brokers()
+
+    assert wrapper_broker

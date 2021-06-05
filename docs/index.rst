@@ -52,6 +52,7 @@ More Info
    
    ./modules/nepse.security
    ./modules/nepse.market
+   ./modules/nepse.broker
 
 
 Indices and tables
