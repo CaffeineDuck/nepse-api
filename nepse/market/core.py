@@ -1,9 +1,11 @@
 import asyncio
 import json
+from ast import Index
 from typing import List, Optional
 
 import humps
 
+from nepse.errors import CompanyNotFound
 from nepse.market.types import FloorSheet, MarketCap
 from nepse.utils import _ClientWrapperHTTPX
 
@@ -27,28 +29,33 @@ class MarketClient:
             return True
         return False
 
-    async def check_IPO(self, scrip, boid) -> bool:
+    async def check_IPO(self, scrip: str, BOID: int) -> bool:
         """Checks if the given user got the IPO
 
         Args:
-            scrip (Any): The Script
-            boid (int): The boid
+            scrip (str): The Scrip of the company
+            boid (int): The user's BOID
 
         Returns:
             bool: Returns if the user got alloted in the IPO
         """
-        scripID = [
-            resp["id"]
-            for resp in self._client_wrapper._get_json(
-                "https://iporesult.cdsc.com.np/result/companyShares/fileUploaded"
-            )["body"]
-            if resp["scrip"] == scrip.upper()
-        ][0]
+        try:
+            scripID = [
+                resp.get("id")
+                for resp in (
+                    await self._client_wrapper._get_json(
+                        "https://iporesult.cdsc.com.np/result/companyShares/fileUploaded"
+                    )
+                ).get("body")
+                if resp.get("scrip") == scrip.upper()
+            ][0]
+        except IndexError:
+            raise CompanyNotFound()
 
         return (
             await self._client_wrapper._post_json(
                 url="https://iporesult.cdsc.com.np/result/result/check",
-                body={"companyShareId": scripID, "boid": boid},
+                body={"companyShareId": scripID, "boid": BOID},
             )
         ).get("success")
 

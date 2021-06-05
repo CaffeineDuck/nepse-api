@@ -107,6 +107,17 @@ async def test_brokers():
     assert wrapper_broker
 
 
+@pytest.mark.asyncio
+async def test_IPO():
+    async with httpx.AsyncClient() as async_client:
+        await asyncio.sleep(0.1)
+
+        client = Client(httpx_client=async_client)
+        ipo_result = await client.market_client.check_IPO("MLBSL", 1301310000123606)
+
+    assert ipo_result == False
+
+
 # @pytest.mark.asyncio
 # async def test_floorsheet():
 #     async with httpx.AsyncClient() as async_client:
