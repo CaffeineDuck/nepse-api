@@ -1,5 +1,6 @@
 import asyncio
-from typing import List
+import json
+from typing import List, Optional
 
 import humps
 
@@ -75,14 +76,24 @@ class MarketClient:
         data = humps.decamelize(resp)
         return [MarketCap(**model) for model in data]
 
-    async def get_floorsheets(self) -> List[FloorSheet]:
+    async def get_floorsheets(
+        self, sleep_time: Optional[int] = 0.4
+    ) -> List[FloorSheet]:
         """Returns the floorsheet data for the current date
+
+        .. note::
+
+            Using this method may take upto **200** seconds, and may take upto **350** MB of memory.
+            Use **get_floorsheets_raw** rather than this if you are planning to dumb the data.
+
+        Args:
+            sleep_time (int): The sleep time after each request so that we don't get
+                rate limited. Increase this if you are getting `ServerDisconnected`
 
         Returns:
             List[FloorSheet]: List of floorsheet data in form of `FloorSheet`
         """
         contents = []
-        tasks = []
 
         pages = (
             (
@@ -114,10 +125,59 @@ class MarketClient:
                 model_tasks.append(_create_model(data))
 
             await asyncio.gather(*model_tasks)
-            await asyncio.sleep(2)
 
         for page_no in range(pages):
-            tasks.append(_get_floorsheet_page(page_no))
+            await _get_floorsheet_page(page_no)
+            await asyncio.sleep(sleep_time)
 
-        await asyncio.gather(*tasks)
+        return contents
+
+    async def get_floorsheets_raw(self, sleep_time: Optional[int] = 0.4) -> List[dict]:
+        """Returns raw floorsheet data which is faster than `nepse.MarketClient.get_floorsheets`
+
+        .. note::
+
+            Using this method may take upto **170** seconds, and may take upto **300** MB
+            of memory. So only use it when necessary.
+
+        Args:
+            sleep_time (int): The sleep time after each request so that we don't get
+                rate limited. Increase this if you are getting `ServerDisconnected`
+
+        Returns:
+            List[dict]: List of raw floorsheet objects
+        """
+        contents = []
+
+        pages = (
+            (
+                await self._client_wrapper._post_json_defualt_body(
+                    f"{BASE_URL}/nepse-data/floorsheet?size=500"
+                )
+            )
+            .get("floorsheets")
+            .get("totalPages")
+        )
+
+        async def _create_model(data: dict) -> None:
+            contents.append(data)
+
+        async def _get_floorsheet_page(page_no: int) -> None:
+            response = (
+                (
+                    await self._client_wrapper._post_json_defualt_body(
+                        f"{BASE_URL}/nepse-data/floorsheet?page={page_no}&size=500&sort=contractId,desc"
+                    )
+                )
+                .get("floorsheets")
+                .get("content")
+            )
+
+            model_tasks = [(_create_model(data)) for data in response]
+            await asyncio.gather(*model_tasks)
+
+        for page_no in range(pages):
+            await _get_floorsheet_page(page_no)
+            await asyncio.sleep(sleep_time)
+
         return contents
