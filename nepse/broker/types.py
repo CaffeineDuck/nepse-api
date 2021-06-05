@@ -71,7 +71,7 @@ class BrokerResponse:
     municipalities: List[Municipality]
     member_tms_link_mapping: MemberTmsLinkMapping
     is_dealer: str
-    member_branch_mappings: MemberBranchMapping
+    member_branch_mappings: List[MemberBranchMapping]
 
     def __post_init__(self) -> None:
         self.member_code = int(self.member_code)
