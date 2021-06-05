@@ -15,6 +15,7 @@ class APIError(NepseException):
     def __str__(self) -> str:
         return "The data couldn't be fetched from the NEPSE API for this"
 
+
 class CompanyNotFound(NotFound):
     def __str__(self) -> str:
         return "The provided company was not found !"
