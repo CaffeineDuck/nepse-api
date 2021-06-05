@@ -8,18 +8,6 @@ from nepse.market.types import FloorSheet, MarketCap
 from nepse.utils import _ClientWrapperHTTPX
 
 BASE_URL = "https://newweb.nepalstock.com/api/nots"
-SPOOF_HEADER = {
-    "authority": "newweb.nepalstock.com.np",
-    "sec-ch-ua": "^\\^Google",
-    "accept": "application/json, text/plain, */*",
-    "sec-ch-ua-mobile": "?0",
-    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.128 Safari/537.36",
-    "sec-fetch-site": "same-origin",
-    "sec-fetch-mode": "cors",
-    "sec-fetch-dest": "empty",
-    "referer": "https://newweb.nepalstock.com.np/",
-    "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
-}
 
 
 class MarketClient:
