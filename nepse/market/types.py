@@ -22,8 +22,8 @@ class FloorSheet:
     contract_id: int
     contract_type: Any
     stock_symbol: str
-    buyer_member_id: int
-    seller_member_id: int
+    buyer_member_id: str
+    seller_member_id: str
     contract_quantity: int
     contract_rate: int
     contract_amount: int
@@ -36,8 +36,5 @@ class FloorSheet:
     security_name: str
 
     def __post_init__(self) -> None:
-        self.buyer_member_id = int(self.buyer_member_id)
-        self.seller_member_id = int(self.seller_member_id)
-
         year, month, day = self.business_date.split("-")
         self.business_date = datetime.date(int(year), int(month), int(day))
