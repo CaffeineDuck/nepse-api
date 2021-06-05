@@ -1,10 +1,4 @@
 import asyncio
-import queue
-import threading
-
-import httpx
-import requests
-from nepse.errors import NotFound
 from typing import List
 
 import humps
