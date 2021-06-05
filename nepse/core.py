@@ -22,9 +22,7 @@ class Client:
             self._client_wrapper, cache_retain_time, use_cache
         )
         self._market_client = MarketClient(self._client_wrapper)
-        self._broker_client = BrokerClient(
-            self._client_wrapper, use_cache, cache_retain_time
-        )
+        self._broker_client = BrokerClient()
 
     @property
     def broker_client(self) -> BrokerClient:
