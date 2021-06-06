@@ -22,9 +22,9 @@ class _ClientWrapperHTTPX:
             raise APIError()
 
     # Created this cause NEPSE API requires POST request
-    # with `{"id": 678}` in body.
+    # with `{"id": 281}` in body.
     async def _post_json_defualt_body(self, url: str) -> object:
-        body = {"id": 678}
+        body = {"id": 281}
         return (await self._client.post(url, json=body)).json()
 
     async def _post_json(self, url: str, body: dict) -> object:
