@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nepse-api"
-version = "1.1.3"
+version = "1.1.4"
 description = "This is a API wrapper for NEPSE API."
 authors = ["Samrid Pandit <samrid.pandit@gmail.com>"]
 license = "MIT"
