@@ -1,9 +1,10 @@
 import json
 from json import JSONDecodeError
 from operator import attrgetter
-from typing import Any, Iterable, Optional, TypeVar
+from typing import Any, Iterable, Mapping, Optional, TypeVar
 
 import attr
+from cachetools import TTLCache
 import httpx
 
 from nepse.errors import APIError
@@ -33,6 +34,26 @@ PAYLOAD_ID_MARKET_ID_MAP = {
 @attr.frozen
 class _ClientWrapperHTTPX:
     _client: httpx.AsyncClient
+    _payload_ids: Mapping[int, int] = TTLCache(2, 500)
+
+    async def _fetch_payload_id(self) -> int:
+        payload_id = PAYLOAD_ID_MARKET_ID_MAP.get(
+            (
+                await self._get_json(
+                    "https://newweb.nepalstock.com/api/nots/nepse-data/market-open"
+                )
+            ).get("id")
+        )
+        self._payload_ids[0] = payload_id
+        return payload_id
+
+    async def _get_payload_id(self) -> int:
+        payload_id = self._payload_ids.get(0)
+
+        if not payload_id:
+            payload_id = await self._fetch_payload_id()
+
+        return payload_id
 
     async def _get_json(self, url: str) -> object:
         try:
@@ -43,14 +64,14 @@ class _ClientWrapperHTTPX:
     # Created this cause NEPSE API requires POST request
     # with `{"id": <some number>}` in body.
     async def _post_json_defualt_body(self, url: str) -> object:
-        payload_id = PAYLOAD_ID_MARKET_ID_MAP.get(
-            (
-                await self._get_json(
-                    "https://newweb.nepalstock.com/api/nots/nepse-data/market-open"
-                )
-            ).get("id")
-        )
-        return (await self._client.post(url, json={"id": payload_id})).json()
+        payload_id = await self._get_payload_id()
+        value = (await self._client.post(url, json={"id": payload_id})).json()
+
+        if value == []:
+            payload_id = await self._fetch_payload_id()
+            value = (await self._client.post(url, json={"id": payload_id})).json()
+
+        return value
 
     async def _post_json(self, url: str, body: dict) -> object:
         """[summary]
