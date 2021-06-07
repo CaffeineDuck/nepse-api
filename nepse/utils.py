@@ -1,4 +1,3 @@
-import json
 from json import JSONDecodeError
 from operator import attrgetter
 from typing import Any, Iterable, Mapping, Optional, TypeVar
