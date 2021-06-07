@@ -4,8 +4,8 @@ from operator import attrgetter
 from typing import Any, Iterable, Mapping, Optional, TypeVar
 
 import attr
-from cachetools import TTLCache
 import httpx
+from cachetools import TTLCache
 
 from nepse.errors import APIError
 
