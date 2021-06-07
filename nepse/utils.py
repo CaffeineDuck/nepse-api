@@ -10,6 +10,25 @@ from nepse.errors import APIError
 
 T = TypeVar("T")
 
+PAYLOAD_ID_MARKET_ID_MAP = {
+    5: 167,
+    11: 318,
+    12: 482,
+    13: 574,
+    14: 895,
+    16: 620,
+    17: 345,
+    18: 326,
+    19: 515,
+    24: 662,
+    25: 198,
+    27: 511,
+    28: 469,
+    29: 537,
+    30: 352,
+    31: 407,
+}
+
 
 @attr.frozen
 class _ClientWrapperHTTPX:
@@ -22,10 +41,16 @@ class _ClientWrapperHTTPX:
             raise APIError()
 
     # Created this cause NEPSE API requires POST request
-    # with `{"id": 281}` in body.
+    # with `{"id": <some number>}` in body.
     async def _post_json_defualt_body(self, url: str) -> object:
-        body = {"id": 281}
-        return (await self._client.post(url, json=body)).json()
+        payload_id = PAYLOAD_ID_MARKET_ID_MAP.get(
+            (
+                await self._get_json(
+                    "https://newweb.nepalstock.com/api/nots/nepse-data/market-open"
+                )
+            ).get("id")
+        )
+        return (await self._client.post(url, json={"id": payload_id})).json()
 
     async def _post_json(self, url: str, body: dict) -> object:
         """[summary]
