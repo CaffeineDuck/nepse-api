@@ -80,15 +80,6 @@ class _ClientWrapperHTTPX:
         return value
 
     async def _post_json(self, url: str, body: dict) -> object:
-        """[summary]
-
-        Args:
-            url (str): [description]
-            body (dict): [description]
-
-        Returns:
-            object: [description]
-        """
         return (await self._client.post(url, json=body)).json()
 
 
