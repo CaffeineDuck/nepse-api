@@ -19,7 +19,7 @@ python = "^3.7"
 cachetools = "^4.2.2"
 pyhumps = "^3.0.2"
 httpx = "^0.18.1"
-attr = "^0.3.1"
+attrs = "^21.2.0"
 
 [tool.poetry.dev-dependencies]
 black = "^21.5b2"
