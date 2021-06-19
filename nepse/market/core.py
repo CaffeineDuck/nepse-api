@@ -177,8 +177,11 @@ class MarketClient:
             await asyncio.sleep(sleep_time)
 
         return contents
+        
+    async def _fetch_sectories_summaries(self, **attrs):
+        pass
 
-    async def get_sectorwise_summary(
+    async def get_sectorwise_summaries(
         self, business_date: Optional[datetime.date] = None
     ) -> List[SectorwiseSummary]:
         """Get the sectorwise summary
@@ -199,4 +202,11 @@ class MarketClient:
 
         return [SectorwiseSummary(**model) for model in sector_wise_summary]
 
+    async def get_sectorwise_summary(self, **attrs) -> SectorwiseSummary:
+        pass
+
+
+    async def get_market_summaries(self) -> List[MarketSummary]:
+        pass
+    
         
