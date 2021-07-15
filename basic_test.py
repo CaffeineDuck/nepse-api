@@ -118,6 +118,26 @@ async def test_IPO():
     assert ipo_result == False
 
 
+@pytest.mark.asyncio
+async def test_company_history():
+    async with httpx.AsyncClient() as async_client:
+        await asyncio.sleep(0.1)
+
+        client = Client(httpx_client=async_client)
+        wrapper_data = [asdict(date) for date in await client.security_client.get_company_history(2792)]
+
+    async with httpx.AsyncClient() as async_client:
+        await asyncio.sleep(0.1)
+
+        wrapper_client = _ClientWrapperHTTPX(async_client)
+        response = await wrapper_client._post_json_defualt_body(
+            "https://newweb.nepalstock.com/api/nots/market/graphdata/2792"
+        )
+        api_data = humps.decamelize(response)
+
+    assert api_data == wrapper_data
+
+
 # @pytest.mark.asyncio
 # async def test_floorsheet():
 #     async with httpx.AsyncClient() as async_client:
