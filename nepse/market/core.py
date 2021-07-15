@@ -1,14 +1,12 @@
 import asyncio
 import datetime
-import json
-from ast import Index
 from typing import List, Optional
 
 import humps
 
 from nepse.errors import CompanyNotFound
 from nepse.market.types import FloorSheet, MarketCap, MarketSummary, SectorwiseSummary
-from nepse.utils import _ClientWrapperHTTPX
+from nepse.utils import _ClientWrapperHTTPX, get
 
 BASE_URL = "https://newweb.nepalstock.com/api/nots"
 
@@ -177,11 +175,8 @@ class MarketClient:
             await asyncio.sleep(sleep_time)
 
         return contents
-        
-    async def _fetch_sectories_summaries(self, **attrs):
-        pass
 
-    async def get_sectorwise_summaries(
+    async def get_sectorwise_summary(
         self, business_date: Optional[datetime.date] = None
     ) -> List[SectorwiseSummary]:
         """Get the sectorwise summary
@@ -190,7 +185,7 @@ class MarketClient:
             business_date (Optional[datetime.date]): The date for which to fetch the data
 
         Returns:
-            List[SectorwiseSummary]: The list of containing data related to sector wise summary
+            List[SectorwiseSummary]: The list containing data related to sector wise summary
         """
         business_date = business_date or datetime.date.today()
 
@@ -202,11 +197,30 @@ class MarketClient:
 
         return [SectorwiseSummary(**model) for model in sector_wise_summary]
 
-    async def get_sectorwise_summary(self, **attrs) -> SectorwiseSummary:
-        pass
-
-
     async def get_market_summaries(self) -> List[MarketSummary]:
-        pass
-    
-        
+        """Get the market summaries
+
+        Returns:
+            List[MarketSummary]: The list of Objects containing related to Market Summary
+        """
+        market_summary = humps.decamelize(
+            await self._client_wrapper._get_json(f"{BASE_URL}/market-summary-history")
+        )
+
+        return [MarketSummary(**model) for model in market_summary]
+
+    async def get_market_summary(
+        self, date: Optional[datetime.date] = None
+    ) -> MarketSummary:
+        """Get the market summary for a specific date
+
+        Args:
+            date (Optional[datetime.date]): Date to filter the market summary. Defaults to today
+
+        Returns:
+            MarketSummary: [description]
+        """
+        market_summaries = await self.get_market_summaries()
+        date = date or datetime.date.today()
+
+        return get(market_summaries, business_date=date)

@@ -39,6 +39,7 @@ class FloorSheet:
         year, month, day = self.business_date.split("-")
         self.business_date = datetime.date(int(year), int(month), int(day))
 
+
 @dataclass
 class SectorwiseSummary:
     business_date: datetime.date
@@ -46,6 +47,19 @@ class SectorwiseSummary:
     turn_over_values: int
     turn_over_volume: int
     total_transaction: int
+
+    def __post_init__(self) -> None:
+        year, month, day = self.business_date.split("-")
+        self.business_date = datetime.date(int(year), int(month), int(day))
+
+
+@dataclass
+class MarketSummary:
+    business_date: datetime.date
+    total_turnover: float
+    total_traded_shares: int
+    total_transactions: int
+    traded_scrips: int
 
     def __post_init__(self) -> None:
         year, month, day = self.business_date.split("-")
