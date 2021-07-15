@@ -165,6 +165,7 @@ class LiveSecurityTrade:
     average_traded_price: float
     market_capitalization: float
 
+
 @dataclass
 class CompanyHistory:
     business_date: datetime.date

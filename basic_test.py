@@ -124,7 +124,10 @@ async def test_company_history():
         await asyncio.sleep(0.1)
 
         client = Client(httpx_client=async_client)
-        wrapper_data = [asdict(date) for date in await client.security_client.get_company_history(2792)]
+        wrapper_data = [
+            asdict(date)
+            for date in await client.security_client.get_company_history(2792)
+        ]
 
     async with httpx.AsyncClient() as async_client:
         await asyncio.sleep(0.1)
