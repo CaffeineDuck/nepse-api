@@ -1,10 +1,12 @@
-from typing import List, Mapping, Optional
+import datetime
+from typing import List, Mapping, Optional, Union
 
 import humps
 from cachetools import TTLCache
 
 from nepse.errors import NotFound
 from nepse.security.types import (
+    CompanyHistory,
     LiveSecurityTrade,
     SecurityResponse,
     SecurityResponseDetailed,
@@ -18,6 +20,7 @@ BASE_SECURITIES_URL = "https://newweb.nepalstock.com/api/nots/securityDailyTrade
 BASE_LIVE_TRADE_URL = (
     "https://newweb.nepalstock.com/api/nots/nepse-data/today-price?&size=500&sort=true"
 )
+BASE_NOTS_URL = "https://newweb.nepalstock.com/api/nots"
 
 
 class SecurityClient:
@@ -180,3 +183,11 @@ class SecurityClient:
             (await self._client_wrapper._get_json(BASE_LIVE_TRADE_URL)).get("content")
         )
         return [LiveSecurityTrade(**model) for model in live_prices]
+
+    async def get_company_history(self, company_id: int) -> List[CompanyHistory]:
+        data = humps.decamelize(
+            await self._client_wrapper._post_json_defualt_body(
+                f"{BASE_NOTS_URL}/market/graphdata/{company_id}"
+            )
+        )
+        return [CompanyHistory(**date) for date in data]
