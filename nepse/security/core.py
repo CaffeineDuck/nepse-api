@@ -185,6 +185,14 @@ class SecurityClient:
         return [LiveSecurityTrade(**model) for model in live_prices]
 
     async def get_company_history(self, company_id: int) -> List[CompanyHistory]:
+        """Returns the history of the company
+
+        Args:
+            company_id (int): ID of the company user wants to get data of
+
+        Returns:
+            List[CompanyHistory]: List of Objects containing the history of the company
+        """
         data = humps.decamelize(
             await self._client_wrapper._post_json_defualt_body(
                 f"{BASE_NOTS_URL}/market/graphdata/{company_id}"
