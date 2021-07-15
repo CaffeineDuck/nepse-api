@@ -164,3 +164,15 @@ class LiveSecurityTrade:
     total_trades: int
     average_traded_price: float
     market_capitalization: float
+
+@dataclass
+class CompanyHistory:
+    business_date: datetime.date
+    open_price: int
+    high_price: int
+    low_price: int
+    previous_day_close_price: int
+    fifty_two_week_high: int
+    last_traded_price: int
+    total_traded_quantity: int
+    close_price: int
