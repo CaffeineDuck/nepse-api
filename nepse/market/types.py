@@ -38,3 +38,15 @@ class FloorSheet:
     def __post_init__(self) -> None:
         year, month, day = self.business_date.split("-")
         self.business_date = datetime.date(int(year), int(month), int(day))
+
+@dataclass
+class SectorwiseSummary:
+    business_date: datetime.date
+    sector_name: str
+    turn_over_values: int
+    turn_over_volume: int
+    total_transaction: int
+
+    def __post_init__(self) -> None:
+        year, month, day = self.business_date.split("-")
+        self.business_date = datetime.date(int(year), int(month), int(day))

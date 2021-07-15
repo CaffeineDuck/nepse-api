@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import json
 from ast import Index
 from typing import List, Optional
@@ -6,7 +7,7 @@ from typing import List, Optional
 import humps
 
 from nepse.errors import CompanyNotFound
-from nepse.market.types import FloorSheet, MarketCap
+from nepse.market.types import FloorSheet, MarketCap, MarketSummary, SectorwiseSummary
 from nepse.utils import _ClientWrapperHTTPX
 
 BASE_URL = "https://newweb.nepalstock.com/api/nots"
@@ -176,3 +177,36 @@ class MarketClient:
             await asyncio.sleep(sleep_time)
 
         return contents
+        
+    async def _fetch_sectories_summaries(self, **attrs):
+        pass
+
+    async def get_sectorwise_summaries(
+        self, business_date: Optional[datetime.date] = None
+    ) -> List[SectorwiseSummary]:
+        """Get the sectorwise summary
+
+        Args:
+            business_date (Optional[datetime.date]): The date for which to fetch the data
+
+        Returns:
+            List[SectorwiseSummary]: The list of containing data related to sector wise summary
+        """
+        business_date = business_date or datetime.date.today()
+
+        sector_wise_summary = humps.decamelize(
+            await self._client_wrapper._get_json(
+                f"{BASE_URL}/sectorwise?businessDate={business_date}"
+            )
+        )
+
+        return [SectorwiseSummary(**model) for model in sector_wise_summary]
+
+    async def get_sectorwise_summary(self, **attrs) -> SectorwiseSummary:
+        pass
+
+
+    async def get_market_summaries(self) -> List[MarketSummary]:
+        pass
+    
+        
