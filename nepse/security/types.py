@@ -140,6 +140,7 @@ class SecurityResponse:
     last_updated_date_time: datetime.datetime
     last_traded_volume: Any
     previous_close: int
+    total_trade_value: int
 
 
 @dataclass
