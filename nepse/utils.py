@@ -17,11 +17,9 @@ class _ClientWrapperHTTPX:
     _payload_ids: Mapping[int, int] = TTLCache(2, 500)
 
     async def _fetch_payload_id(self) -> int:
-        payload_id = (
-            await self._get_json(
-                "http://nepse-payload-id.samrid.me/"
-            )
-        ).get("payload_id")
+        payload_id = (await self._get_json("http://nepse-payload-id.samrid.me/")).get(
+            "payload_id"
+        )
 
         self._payload_ids[0] = payload_id
         return payload_id
