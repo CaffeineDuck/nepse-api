@@ -10,33 +10,6 @@ from nepse.errors import APIError
 
 T = TypeVar("T")
 
-PAYLOAD_ID_MARKET_ID_MAP = {
-    3: 896,
-    5: 167,
-    7: 359,
-    8: 890,
-    11: 318,
-    12: 482,
-    13: 574,
-    14: 895,
-    16: 620,
-    15: 582,
-    17: 345,
-    18: 326,
-    19: 515,
-    24: 662,
-    25: 198,
-    27: 511,
-    28: 469,
-    29: 537,
-    30: 352,
-    31: 407,
-    32: 287,
-    33: 479,
-    34: 613,
-    45: 822,
-}
-
 
 @attr.frozen
 class _ClientWrapperHTTPX:
@@ -44,13 +17,10 @@ class _ClientWrapperHTTPX:
     _payload_ids: Mapping[int, int] = TTLCache(2, 500)
 
     async def _fetch_payload_id(self) -> int:
-        payload_id = PAYLOAD_ID_MARKET_ID_MAP.get(
-            (
-                await self._get_json(
-                    "https://newweb.nepalstock.com/api/nots/nepse-data/market-open"
-                )
-            ).get("id")
+        payload_id = (await self._get_json("http://nepse-payload-id.samrid.me/")).get(
+            "payload_id"
         )
+
         self._payload_ids[0] = payload_id
         return payload_id
 
