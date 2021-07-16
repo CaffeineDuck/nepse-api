@@ -10,7 +10,7 @@ async def main():
         client = Client(async_client)
 
         # check_IPO takes in two parameters, company scrip and BOID
-        result = await client.market_client.check_IPO("MSLBSL", <Your BOID Here>)
+        result = await client.market_client.check_IPO("MSLBSL", 130110000000000)
 
         # This returns a boolean value
         print(result)

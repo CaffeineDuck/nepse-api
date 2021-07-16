@@ -20,4 +20,4 @@ class Nepse(commands.Cog):
 
 bot.add_cog(Nepse(bot))
 
-bot.run(YOUR_TOKEN_HERE)
+bot.run("YOUR_TOKEN_HERE")
