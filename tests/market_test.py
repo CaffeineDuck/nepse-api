@@ -1,5 +1,5 @@
-from http import client
 import sys
+from http import client
 
 from nepse.utils import _ClientWrapperHTTPX
 
