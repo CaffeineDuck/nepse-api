@@ -24,9 +24,7 @@ class MarketClient:
         response = await self._client_wrapper._get_json(
             f"{BASE_URL}/nepse-data/market-open"
         )
-        if response["isOpen"] != "CLOSE":
-            return True
-        return False
+        return response.get("isOpen") != "CLOSE"
 
     async def check_IPO(self, scrip: str, BOID: int) -> bool:
         """Checks if the given user got the IPO
