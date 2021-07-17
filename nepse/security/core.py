@@ -7,7 +7,9 @@ from cachetools import TTLCache
 from nepse.errors import NotFound
 from nepse.security.types import (
     CompanyHistory,
+    Gainer,
     LiveSecurityTrade,
+    Loser,
     SecurityResponse,
     SecurityResponseDetailed,
 )
@@ -199,3 +201,29 @@ class SecurityClient:
             )
         )
         return [CompanyHistory(**date) for date in data]
+
+    async def get_top_gainers(self) -> Gainer:
+        """Returns the top gainers for the current day
+
+        Returns:
+            TopGainers: List of Objects containing the top gainers for the day
+        """
+        data = humps.decamelize(
+            await self._client_wrapper._get_json(
+                f"{BASE_NOTS_URL}/top-ten/top-gainer?all=true"
+            )
+        )
+        return [Gainer(**model) for model in data]
+
+    async def get_top_losers(self) -> Loser:
+        """Returns the top losers for the current day
+
+        Returns:
+            TopLosers: List of Objects containing the top losers for the day
+        """
+        data = humps.decamelize(
+            await self._client_wrapper._get_json(
+                f"{BASE_NOTS_URL}/top-ten/top-loser?all=true"
+            )
+        )
+        return [Loser(**model) for model in data]

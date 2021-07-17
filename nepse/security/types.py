@@ -177,3 +177,23 @@ class CompanyHistory:
     last_traded_price: int
     total_traded_quantity: int
     close_price: int
+
+
+@dataclass
+class TopGainLose:
+    symbol: str
+    ltp: int
+    point_change: float
+    percentage_change: float
+    security_name: str
+    security_id: int
+
+
+@dataclass
+class Gainer(TopGainLose):
+    pass
+
+
+@dataclass
+class Loser(TopGainLose):
+    pass
