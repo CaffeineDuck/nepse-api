@@ -13,7 +13,7 @@ class NotFound(NepseException):
 
 class APIError(NepseException):
     def __str__(self) -> str:
-        return "The data couldn't be fetched from the NEPSE API for this"
+        return "The data couldn't be fetched from the NEPSE API for this !"
 
 
 class CompanyNotFound(NotFound):
