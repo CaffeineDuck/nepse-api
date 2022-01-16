@@ -1,8 +1,13 @@
 # NEPSE API Wrapper
 
+## NOTE: 
+
+This project has been archived as the project is unmaintainable in the current conditions due to raplidly changing NEPSE API. 
+I will try to work on it in a private repo. But until that is finalized, this project will be archived.
+
+
 This python module fetches the data from [Nepali Stock Site](https://newweb.nepalstock.com/) and provides them in a pythonic
 and usable way.
-
 
 ## About
 
